@@ -2,38 +2,36 @@
 
 > **Canonical schema for all extracted design conversations.**
 
-كل Design Case يجب أن يستخدم نفس البناء حتى تصبح الذاكرة قابلة للبحث والتحليل والتعلم لاحقًا.
+كل Design Case تستخدم نفس البناء حتى تصبح الذاكرة قابلة للبحث والاستدعاء والتعلم.
 
 ## Identity
 
 - `case_id`: مثل `DESIGN-2026-000001`
 - `case_status`: DRAFT | APPROVED_FOR_SAVE | SAVED | NOT_CONFIRMED
-- `conversation_date`: إذا كانت معروفة
-- `extraction_date`: تاريخ استخراج الحالة
+- `conversation_date`
+- `extraction_date`
 - `source`: CHATGPT_CHAT | OTHER_CHAT | MANUAL
-- `source_reference`: مرجع غير حساس للمحادثة إن توفر
+- `source_reference`
 
 ## Customer / Order Context
 
 - `customer_id`: إن كان معروفًا فقط
-- `customer_name`: إن ذكر صراحة وكان مسموحًا حفظه
+- `customer_name`: إن كان مسموحًا ومفيدًا
 - `order_id`: إن وجد بوضوح، وإلا `UNKNOWN`
-- `line_id`: اختياري إن وجد بوضوح مستقبلًا
+- `line_id`: اختياري
 - `repeat_customer`: YES | NO | UNKNOWN
 
-> لا تستخدم اسم العميل أو الهاتف كمفتاح منطقي بديلًا عن Order ID عند وجود ربط بـTrendOS مستقبلًا.
->
-> `case_id` هو المفتاح الأساسي لذاكرة التصميم. `order_id` رابط Business/Foreign Key فقط؛ قد يرتبط Order ID واحد بأكثر من Design Case.
+`case_id` هو المفتاح الأساسي لذاكرة التصميم. `order_id` رابط Business/Foreign Key فقط، وقد يرتبط Order ID واحد بأكثر من Design Case.
 
 ## Request
 
-- `customer_request_raw`: الطلب الأصلي بصياغة المستخدم قدر الإمكان دون اختراع
-- `request_summary`: ملخص منظم
+- `customer_request_raw`
+- `request_summary`
 - `product_type`
 - `dimensions`
 - `unit`
-- `quantity`: إن وجدت
-- `required_text`: النصوص المطلوب استخدامها حرفيًا
+- `quantity`
+- `required_text`
 
 ## Design Intent
 
@@ -47,61 +45,61 @@
 ## Constraints
 
 ### Must Keep
-قائمة بكل ما يجب الحفاظ عليه، مثل:
-- ملامح الوجه
-- النص كما هو
-- اتجاه الصورة
-- عنصر محدد
+كل ما يجب الحفاظ عليه.
 
 ### Must Avoid
-قائمة بكل ما تم منعه أو رفضه، مثل:
-- لا فلاتر
-- لا تغيير ملامح
-- لا خلفية مزخرفة
-- لا قص للرأس
+كل ما تم منعه أو رفضه.
 
 ## Assets
 
-راجع أيضًا `ASSET_LINKING_CONTRACT.md`.
+راجع `ASSET_LINKING_CONTRACT.md`.
 
 لكل Asset:
 
 - `asset_id`: أثناء Draft مثل `DRAFT-A001`، وبعد الحفظ مثل `DESIGN-2026-000001-A001`
 - `case_id`
-- `order_id`: إن كان معروفًا، وإلا `UNKNOWN`
-- `source_role`
+- `order_id`
+- `source_role`: customer_original | reference_design | generated_result | final_approved | unknown
 - `conversation_position`
 - `purpose`
 - `instructions`
-- `attempt_id`: إن ارتبطت بمحاولة محددة
-- `derived_from_asset_id`: إن كان معروفًا
+- `attempt_id`
+- `derived_from_asset_id`
 - `privacy_class`: PUBLIC_SAFE | CUSTOMER_PRIVATE | UNKNOWN
-- `asset_binding_status`: PENDING_STORAGE | LINKED | MISSING | REMOVED
-- `storage_provider`: PENDING إلى أن يعتمد مكان التخزين
-- `storage_ref`: PENDING إلى أن يوجد رابط/معرف حقيقي
-- `storage_key`: اختياري لاحقًا
-- `content_hash`: اختياري بعد التخزين الفعلي
-- `linked_at`: اختياري بعد الربط الفعلي
+- `asset_binding_status`: LINKED | PENDING_UPLOAD | MISSING | REMOVED
+- `storage_provider`: GOOGLE_DRIVE
+- `drive_root_folder_id`
+- `drive_year_folder_id`
+- `drive_case_folder_id`
+- `drive_file_id`
+- `storage_ref`
+- `file_name`
+- `mime_type`
+- `content_hash`: اختياري
+- `linked_at`
 
-### قاعدة المرحلة الحالية للصور
+### Google Drive الرسمي
 
-إذا كانت الصورة ظاهرة في الشات لكن لا يوجد Storage خاص معتمد، يجب **مع ذلك** إنشاء Asset Record وحجز Asset ID لها، مع:
+Root Folder ID:
+`1qhoxC_c2MF3X_hhHcWiDo2SzW2ySCch_`
 
-- `asset_binding_status: PENDING_STORAGE`
-- `storage_provider: PENDING`
-- `storage_ref: PENDING`
+إذا الصورة معروفة من الشات لكن الملف نفسه لم يُرفع بعد:
 
-بهذا يمكن ربط الصور الحقيقية لاحقًا بدون إعادة استخراج المحادثة.
+- `asset_binding_status: PENDING_UPLOAD`
+- `storage_provider: GOOGLE_DRIVE`
+- `drive_file_id: PENDING`
+
+لا تستخدم `LINKED` إلا بعد وجود Drive File ID حقيقي.
 
 ## Attempts Timeline
 
 لكل محاولة:
 
 - `attempt_id`: V1 / V2 / V3 ...
-- `input_basis`: ما الذي بنيت عليه المحاولة
-- `prompt_or_instruction_used`: إن كان معلومًا
+- `input_basis`
+- `prompt_or_instruction_used`
 - `result_description`
-- `result_asset_id`: إن وجد
+- `result_asset_id`
 - `customer_feedback_raw`
 - `feedback_class`: LIKED | PARTIAL | REJECTED | UNKNOWN
 - `requested_changes`
@@ -113,20 +111,18 @@
 - `approval.status`: FINAL_APPROVED | EXPLICITLY_LIKED | PARTIAL_ACCEPTANCE | REJECTED | NOT_CONFIRMED
 - `approval.final_attempt_id`
 - `approval.final_asset_id`
-- `approval.evidence`: وصف قصير لما يثبت الحالة
+- `approval.evidence`
 
 ## Learning
 
-- `reusable_rules`: قواعد عامة قابلة للاستخدام في شغل مشابه
-- `customer_preferences`: تفضيلات تخص العميل إذا كان العميل معروفًا
-- `negative_preferences`: ما يكرهه/يرفضه العميل
-- `product_patterns`: أنماط خاصة بنوع المنتج
-- `search_tags`: Tags عربية/إنجليزية للبحث
-- `confidence_notes`: ما هو مؤكد وما هو مستنتج
+- `reusable_rules`
+- `customer_preferences`
+- `negative_preferences`
+- `product_patterns`
+- `search_tags`
+- `confidence_notes`
 
 ## Truth Labels
-
-عند الحاجة ضع أمام الحقل:
 
 - `EXPLICIT`
 - `INFERRED`
@@ -134,52 +130,39 @@
 
 ## Save Format
 
-بعد اعتماد المستخدم، تحفظ كل حالة في ملف Markdown واحد على الأقل:
-
 `CASES/YYYY/DESIGN-YYYY-NNNNNN.md`
 
-ويفضل أن يحتوي أعلى الملف على YAML front matter للحقول القابلة للفهرسة، ثم تفاصيل الحالة البشرية أسفلها.
-
-مثال:
+يفضل YAML front matter يحتوي مثلًا:
 
 ```yaml
 ---
 case_id: DESIGN-2026-000001
 case_status: SAVED
 order_id: UNKNOWN
-product_type: mug
-approval_status: FINAL_APPROVED
-asset_count: 4
-pending_asset_count: 4
-search_tags:
-  - مج
-  - 20x9
-  - صورتين
-  - بدون تغيير ملامح
+approval_status: NOT_CONFIRMED
+asset_count: 1
+linked_asset_count: 0
+pending_asset_count: 1
+storage_provider: GOOGLE_DRIVE
+drive_case_folder_id: PENDING
 ---
 ```
 
-ثم أقسام Markdown للتفاصيل والتايملاين والـAssets والتعلم.
+ثم تفاصيل Request، Timeline، Assets، Approval، Learning.
 
-## Future Asset Linking
-
-عند اختيار Storage خاص لاحقًا:
+## تحديث الصور لاحقًا
 
 - لا تغيّر `case_id`.
+- لا تغيّر Asset IDs.
 - لا تعيد استخراج الشات.
-- اربط كل ملف حقيقي بالـ`asset_id` المحجوزة.
-- حدّث فقط حقول الربط مثل `asset_binding_status`, `storage_provider`, `storage_ref`, `storage_key`, `linked_at`.
-- إذا أضيف `order_id` لاحقًا، أضفه كرابط بدون تغيير Case ID أو Asset IDs.
-
-التفاصيل الكاملة في `ASSET_LINKING_CONTRACT.md`.
+- ارفع الصورة إلى مجلد الـCase على Google Drive.
+- حدّث `drive_file_id` و`storage_ref` و`asset_binding_status` و`linked_at` فقط مع الحفاظ على التاريخ.
 
 ## Learning Priority
-
-عند استخدام الحالات لاحقًا:
 
 1. FINAL_APPROVED
 2. EXPLICITLY_LIKED
 3. PARTIAL_ACCEPTANCE
 4. REJECTED
 
-لا تستخدم نتيجة مرفوضة كنموذج إيجابي، لكن استخدمها كـnegative example لما يجب تجنبه.
+لا تستخدم نتيجة مرفوضة كنموذج إيجابي.
