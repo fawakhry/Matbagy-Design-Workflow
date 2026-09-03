@@ -2,88 +2,60 @@
 
 ## متى يسمح بالحفظ؟
 
-لا تحفظ داخل `CASES/` إلا بعد موافقة المستخدم الصريحة على الـDraft، مثل:
-
-- `تمام سجل`
-- `اعتمد وسجل`
-- `سجل كده`
-- أو صياغة واضحة لا تحتمل اللبس
+لا تحفظ داخل `CASES/` ولا ترفع الصور إلا بعد موافقة المستخدم الصريحة على الـDraft، مثل `تمام سجل` أو `اعتمد وسجل`.
 
 ## قبل الكتابة
 
 1. اقرأ `../SCHEMA/DESIGN_CASE_SCHEMA.md`.
 2. اقرأ `../SCHEMA/ASSET_LINKING_CONTRACT.md`.
-3. طبّق أي تصحيحات قالها المستخدم بعد عرض الـDraft.
-4. تأكد أن كل حقول غير مؤكدة مازالت موسومة `INFERRED` أو `UNKNOWN`.
-5. لا تخترع روابط صور أو IDs أو موافقات غير موجودة.
-6. افحص الحالات الحالية لتحديد Case ID جديد بدون تعارض.
+3. طبّق تصحيحات المستخدم.
+4. اترك غير المؤكد `INFERRED` أو `UNKNOWN`.
+5. افحص الحالات الحالية لتحديد Case ID التالي بدون تعارض.
 
 ## Case ID
 
-الصيغة:
-
 `DESIGN-YYYY-NNNNNN`
 
-مثال:
-
-`DESIGN-2026-000001`
-
-يجب اختيار الرقم التالي المتاح بعد فحص الحالات المسجلة في السنة نفسها.
+هو المفتاح الأساسي للحالة.
 
 ## Order ID
 
-- إذا كان Order ID ظاهرًا بوضوح في المحادثة، سجله كما هو.
-- إذا لم يكن موجودًا، سجّل `UNKNOWN`.
-- ممنوع اختراعه.
-- يمكن إضافته لاحقًا بدون تغيير Case ID.
-- Order ID الواحد قد يرتبط بأكثر من Design Case.
+إذا ظهر بوضوح سجله كما هو؛ وإلا `UNKNOWN`. ممنوع اختراعه. ويمكن إضافته لاحقًا بدون تغيير Case ID.
 
-## Asset IDs عند الحفظ
+## Asset IDs
 
-قبل كتابة الحالة النهائية:
+حوّل Draft IDs إلى:
 
-1. احصر كل الصور/الملفات المرئية المسجلة في الـDraft.
-2. حوّل Draft Asset IDs إلى IDs نهائية مرتبطة بالـCase.
-3. استخدم الصيغة:
+`<CASE_ID>-A001`, `<CASE_ID>-A002`...
 
-`<CASE_ID>-A001`
-`<CASE_ID>-A002`
-`<CASE_ID>-A003`
+وحدّث أي روابط داخل Timeline أو Approval لتشير إلى IDs النهائية.
 
-مثال:
+## Google Drive هو مخزن الصور الرسمي
 
-`DESIGN-2026-000001-A001`
+Root Folder ID:
+`1qhoxC_c2MF3X_hhHcWiDo2SzW2ySCch_`
 
-4. حدّث أي `result_asset_id` أو `final_asset_id` أو `derived_from_asset_id` ليشير إلى الـIDs النهائية.
-5. إذا لم يوجد Storage خاص للصور بعد، لا تترك الصورة بدون سجل؛ استخدم:
+مجلد 2026:
+`1AP68g1gP0S3fNNzgyOkithg3VfH4kEgE`
 
-- `asset_binding_status: PENDING_STORAGE`
-- `storage_provider: PENDING`
-- `storage_ref: PENDING`
+بعد الموافقة:
 
-الهدف أن تكون كل صورة محجوزة بمعرف ثابت من الآن حتى يمكن ربط الملف الحقيقي لاحقًا.
+1. أنشئ/استخدم مجلد السنة.
+2. أنشئ مجلدًا باسم Case ID داخل السنة.
+3. ارفع كل صورة/ملف متاح فعليًا من المحادثة إذا كانت الأدوات تسمح بالوصول إلى bytes/file reference.
+4. سمِّ الملف بما يبدأ بـAsset ID قدر الإمكان.
+5. سجّل `drive_file_id` الحقيقي لكل ملف تم رفعه.
+6. اجعل `asset_binding_status: LINKED` فقط بعد نجاح الرفع ووجود File ID.
+7. إذا كان Asset معروفًا لكن الملف نفسه غير متاح للأداة، استخدم `asset_binding_status: PENDING_UPLOAD` و`storage_provider: GOOGLE_DRIVE`.
+8. لا تدّعِ رفع أي صورة لم تحصل لها على File ID حقيقي.
 
-## مكان الحفظ
+## مكان حفظ Case
 
 `CASES/YYYY/DESIGN-YYYY-NNNNNN.md`
 
-## محتوى الملف
+ويجب أن يحتوي على Request، Design Intent، Constraints، Assets Map، Timeline، Approval، Reusable Rules، Search Tags، وTruth/Confidence notes.
 
-يجب أن يحتوي:
-
-- YAML front matter مختصر للفهرسة.
-- Request.
-- Design Intent.
-- Constraints.
-- Assets map مع Case ID / Order ID / Asset IDs.
-- Attempts Timeline.
-- Approval state.
-- Reusable Rules.
-- Customer preferences عند وجود هوية مؤكدة.
-- Search Tags.
-- Truth/Confidence notes.
-
-ويفضل أن يتضمن الـYAML:
+يفضل أن يتضمن YAML:
 
 - `case_id`
 - `order_id`
@@ -91,49 +63,24 @@
 - `asset_count`
 - `linked_asset_count`
 - `pending_asset_count`
+- `storage_provider: GOOGLE_DRIVE`
+- `drive_case_folder_id`
 
-## الصور والبيانات الخاصة
+## الخصوصية
 
-الـRepository الحالي قد يكون Public.
-
-لذلك في V1.1:
-
-- لا ترفع صور عملاء حقيقية إلى GitHub العام.
-- لا تكتب أرقام هواتف أو عناوين أو معلومات شخصية غير لازمة للتعلم.
-- استخدم Asset metadata/placeholder بدل الملف الحقيقي إذا لم يوجد تخزين خاص معتمد.
-- لا تحفظ secrets بأي شكل.
-
-## الربط المستقبلي للصور
-
-عندما يعتمد مكان الصور لاحقًا:
-
-- لا تعيد استخراج المحادثة.
-- لا تنشئ Case ID جديدة لنفس الحالة.
-- استخدم الـAsset IDs المحجوزة لمطابقة الملفات الحقيقية.
-- حدّث فقط بيانات الربط Storage fields.
-- حافظ على الـTimeline والتاريخ القديم.
-
-راجع `../SCHEMA/ASSET_LINKING_CONTRACT.md` قبل أي عملية Backfill للصور.
+- لا ترفع صور العملاء إلى GitHub العام.
+- GitHub يحفظ الـmetadata والذاكرة فقط.
+- Google Drive يحفظ الصور الفعلية.
+- لا تحفظ Tokens أو Secrets.
 
 ## بعد الحفظ
 
-أبلغ المستخدم بـ:
+أبلغ المستخدم بـCase ID، Order ID أو UNKNOWN، مسار GitHub، Approval status، عدد الـAssets، عدد LINKED، عدد PENDING_UPLOAD، وعدد Reusable Rules.
 
-- Case ID.
-- Order ID أو `UNKNOWN`.
-- المسار الذي تم الحفظ فيه.
-- Approval status.
-- عدد المحاولات التي تم تسجيلها.
-- عدد الـAssets المحجوزة.
-- عدد الصور `PENDING_STORAGE`.
-- عدد القواعد القابلة لإعادة الاستخدام.
+## التحديث اللاحق
 
-## عدم تعديل التاريخ بصمت
+إذا عاد المستخدم بصورة قديمة أو Order ID جديد:
 
-إذا عاد المستخدم لاحقًا بمعلومة أو تعديل على Case محفوظة:
-
-- لا تمسح التاريخ السابق بدون أثر.
-- حدّث الحالة بطريقة تحافظ على Timeline.
-- سجّل سبب التعديل وتاريخه.
-
-الهدف أن يظل صندوق مطبعجي Audit Trail حقيقي لتعلّم المصمم الذكي.
+- لا تنشئ Case جديدة لنفس الحالة.
+- لا تغيّر Case ID أو Asset IDs.
+- حدّث فقط حقول الربط أو الـTimeline مع الحفاظ على Audit Trail.
