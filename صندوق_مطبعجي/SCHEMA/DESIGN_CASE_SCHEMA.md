@@ -17,10 +17,13 @@
 
 - `customer_id`: إن كان معروفًا فقط
 - `customer_name`: إن ذكر صراحة وكان مسموحًا حفظه
-- `order_id`: إن وجد بوضوح
+- `order_id`: إن وجد بوضوح، وإلا `UNKNOWN`
+- `line_id`: اختياري إن وجد بوضوح مستقبلًا
 - `repeat_customer`: YES | NO | UNKNOWN
 
 > لا تستخدم اسم العميل أو الهاتف كمفتاح منطقي بديلًا عن Order ID عند وجود ربط بـTrendOS مستقبلًا.
+>
+> `case_id` هو المفتاح الأساسي لذاكرة التصميم. `order_id` رابط Business/Foreign Key فقط؛ قد يرتبط Order ID واحد بأكثر من Design Case.
 
 ## Request
 
@@ -59,16 +62,36 @@
 
 ## Assets
 
+راجع أيضًا `ASSET_LINKING_CONTRACT.md`.
+
 لكل Asset:
 
-- `asset_id`
+- `asset_id`: أثناء Draft مثل `DRAFT-A001`، وبعد الحفظ مثل `DESIGN-2026-000001-A001`
+- `case_id`
+- `order_id`: إن كان معروفًا، وإلا `UNKNOWN`
 - `source_role`
 - `conversation_position`
 - `purpose`
 - `instructions`
-- `persisted`
-- `storage_ref`
+- `attempt_id`: إن ارتبطت بمحاولة محددة
+- `derived_from_asset_id`: إن كان معروفًا
 - `privacy_class`: PUBLIC_SAFE | CUSTOMER_PRIVATE | UNKNOWN
+- `asset_binding_status`: PENDING_STORAGE | LINKED | MISSING | REMOVED
+- `storage_provider`: PENDING إلى أن يعتمد مكان التخزين
+- `storage_ref`: PENDING إلى أن يوجد رابط/معرف حقيقي
+- `storage_key`: اختياري لاحقًا
+- `content_hash`: اختياري بعد التخزين الفعلي
+- `linked_at`: اختياري بعد الربط الفعلي
+
+### قاعدة المرحلة الحالية للصور
+
+إذا كانت الصورة ظاهرة في الشات لكن لا يوجد Storage خاص معتمد، يجب **مع ذلك** إنشاء Asset Record وحجز Asset ID لها، مع:
+
+- `asset_binding_status: PENDING_STORAGE`
+- `storage_provider: PENDING`
+- `storage_ref: PENDING`
+
+بهذا يمكن ربط الصور الحقيقية لاحقًا بدون إعادة استخراج المحادثة.
 
 ## Attempts Timeline
 
@@ -123,8 +146,11 @@
 ---
 case_id: DESIGN-2026-000001
 case_status: SAVED
+order_id: UNKNOWN
 product_type: mug
 approval_status: FINAL_APPROVED
+asset_count: 4
+pending_asset_count: 4
 search_tags:
   - مج
   - 20x9
@@ -134,6 +160,18 @@ search_tags:
 ```
 
 ثم أقسام Markdown للتفاصيل والتايملاين والـAssets والتعلم.
+
+## Future Asset Linking
+
+عند اختيار Storage خاص لاحقًا:
+
+- لا تغيّر `case_id`.
+- لا تعيد استخراج الشات.
+- اربط كل ملف حقيقي بالـ`asset_id` المحجوزة.
+- حدّث فقط حقول الربط مثل `asset_binding_status`, `storage_provider`, `storage_ref`, `storage_key`, `linked_at`.
+- إذا أضيف `order_id` لاحقًا، أضفه كرابط بدون تغيير Case ID أو Asset IDs.
+
+التفاصيل الكاملة في `ASSET_LINKING_CONTRACT.md`.
 
 ## Learning Priority
 
