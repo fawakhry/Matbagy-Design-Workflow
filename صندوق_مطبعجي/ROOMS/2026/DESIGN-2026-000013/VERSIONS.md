@@ -12,17 +12,18 @@
 - review_note: الزينة أصبحت Must Avoid بعد هذا الطلب.
 
 ## V2
-- status: SUCCESS
+- status: APPROVED
 - source_assets: DESIGN-2026-000013-A002 + A003
 - result_asset: DESIGN-2026-000013-A005
 - request: خلفية بيضاء بدون أي تزيين مع نفس الفكرة والبيانات.
 - result: تصميم أبيض بسيط، الطفلان بملابس عريس وعروسة، والبيانات بالأعلى.
-- archival_final: YES — AUTO_SELECTED
+- archival_final: YES
 - archival_final_basis: LATEST_SUCCESSFUL_NON_REJECTED
-- customer_approval: NOT_DOCUMENTED
-- user_feedback_after_result: `سجل في صندوق مطبعجي علي جيت هب`
-- review_note: أمر التسجيل حفظ للـCase وليس اعتمادًا نهائيًا صريحًا للتصميم.
+- final_approval: FINAL_APPROVED_BY_USER
+- approval_evidence: `اقفل الحالة بقت نهائي`
+- approved_at: 2026-09-04T06:07:41+03:00
+- review_note: V2 هي النسخة النهائية المعتمدة والمغلقة للحالة.
 
 ## Next
-- next_version: V3
-- trigger: أمر تعديل/تنفيذ صريح من المستخدم فقط.
+- next_version: NONE
+- trigger: لا توجد نسخة تالية إلا إذا أعاد المستخدم فتح نفس الـCase لاحقًا.
