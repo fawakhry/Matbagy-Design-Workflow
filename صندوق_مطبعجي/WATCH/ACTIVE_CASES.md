@@ -138,6 +138,23 @@
 - `user_decision`: `PENDING`
 - `open_disagreements`: `0`
 
+## DESIGN-2026-000100
+
+- `case_id`: `DESIGN-2026-000100`
+- `order_id`: `UNKNOWN`
+- `room_path`: `صندوق_مطبعجي/ROOMS/2026/DESIGN-2026-000100/`
+- `room_status`: `WAITING_USER`
+- `case_phase`: `OPEN`
+- `watch_status`: `ACTIVE`
+- `approval_status`: `NOT_CONFIRMED`
+- `ai_authority`: `ADVISORY_ONLY`
+- `current_version`: `V1`
+- `next_version`: `V2`
+- `chatgpt_status`: `SYNCED`
+- `gemini_status`: `NOT_REQUESTED`
+- `user_decision`: `PENDING_FINAL_APPROVAL`
+- `open_disagreements`: `0`
+
 ## Recently closed
 
 ### DESIGN-2026-000005
