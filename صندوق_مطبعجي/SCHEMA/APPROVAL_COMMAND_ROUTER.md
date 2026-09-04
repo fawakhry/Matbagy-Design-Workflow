@@ -1,12 +1,12 @@
 # Approval / Persistence Router — صندوق مطبعجي
 
-> الهدف: فصل حفظ ذاكرة الـCase عن اعتماد التصميم النهائي وعن أوامر التنفيذ، مع اعتماد Auto-Persist بدل انتظار موافقة بشرية على الحفظ.
+> الهدف: جعل حفظ الذاكرة واختيار النسخة النهائية للأرشفة تلقائيين، مع إبقاء أوامر التنفيذ منفصلة وعدم اختراع Customer Approval.
 
 ## الحالة
 
-`ACTIVE / REQUIRED / AUTO_PERSIST`
+`ACTIVE / REQUIRED / AUTO_PERSIST / AUTO_FINAL_SELECTION`
 
-هذا العقد له الأولوية على أي تعليمات أقدم تطلب `اعتمد وسجل` قبل حفظ الـCase.
+هذا العقد له الأولوية على أي تعليمات أقدم تطلب `اعتمد وسجل` أو تأكيدًا جديدًا قبل حفظ الـCase أو اختيار Final Asset للأرشفة.
 
 ## 1) Auto-Persist هو الوضع الافتراضي
 
@@ -17,40 +17,59 @@
 3. امنع التكرار وابحث عن Case موجودة قبل إنشاء واحدة جديدة.
 4. أنشئ أو حدّث Case تلقائيًا بدون انتظار موافقة المستخدم.
 5. خصص/حافظ على Case ID وAsset IDs وVersion IDs.
-6. ارفع كل Asset متاح فعليًا إلى Google Drive داخل Project Root الرسمي.
-7. سجّل Drive File ID الحقيقي لكل ملف تم رفعه.
-8. سجّل المحاولات والنتائج والفشل والقبول والرفض كما حدثت.
-9. احفظ GitHub metadata والـRoom/Storage records.
-10. بعد نجاح الحفظ اعرض للمستخدم روابط Google Drive للصور/Case folder للتأكيد الاختياري فقط.
+6. اختَر Final Asset للأرشفة تلقائيًا حسب سياسة الاختيار أدناه.
+7. ارفع كل Asset متاح فعليًا إلى Google Drive داخل Project Root الرسمي.
+8. سجّل Drive File ID الحقيقي لكل ملف تم رفعه.
+9. سجّل المحاولات والنتائج والفشل والقبول والرفض كما حدثت.
+10. احفظ GitHub metadata والـRoom/Storage records.
+11. بعد نجاح الحفظ اعرض للمستخدم روابط Google Drive للصور/Case folder للتأكيد الاختياري فقط.
 
-لا توجد Human Approval Gate لحفظ الذاكرة.
+لا توجد Human Approval Gate لحفظ الذاكرة أو اختيار Final Asset الأرشيفية.
 
-## 2) عبارات مثل `اعتمد وسجل` لم تعد مطلوبة
+## 2) عبارات الاعتماد لم تعد مطلوبة للحفظ أو Final Selection
 
 الأوامر:
 - `اعتمد وسجل`
 - `تمام سجل`
-- `سجل الحالة`
+- `اعتمد التصميم النهائي`
+- `ده النهائي`
 
-أصبحت اختيارية/Legacy فقط.
+ليست مطلوبة كشرط للحفظ أو اختيار Final Asset للأرشفة.
 
-إذا قالها المستخدم، لا تشغّل Image Generation ولا تغيّر Final Approval؛ فقط تأكد أن Auto-Persist اكتمل بالفعل.
+إذا قالها المستخدم، تعامل معها كـEvidence إضافي فقط، ولا تشغّل Image Generation بسببها.
 
-## 3) اعتماد التصميم النهائي منفصل
+## 3) سياسة Final Selection التلقائية
 
-`DESIGN_FINAL_APPROVAL` لا يُستنتج من مجرد الحفظ التلقائي.
+اختيار النسخة النهائية المحفوظة للأرشفة يتم تلقائيًا بهذا الترتيب:
 
-يُثبت فقط من Evidence واضح، مثل:
-- المستخدم يقول صراحة إن التصميم/النسخة نفسها نهائية.
-- Customer approval موثق في الشات أو مصدر معتمد.
+1. نسخة عليها Final/Approval صريح داخل الشات نفسه.
+2. آخر نتيجة ناجحة لم تُرفض ولم يأتِ بعدها طلب تعديل واضح.
+3. آخر نتيجة عليها قبول/إعجاب واضح ولم تُرفض لاحقًا.
+4. إذا لا توجد أي نتيجة صالحة:
+   `archival_final_status: NO_VALID_FINAL_ASSET`
 
-إذا لا يوجد Evidence نهائي:
+عند اختيار نسخة تلقائيًا استخدم:
 
-`design_final_approval: NOT_CONFIRMED`
+- `archival_final_status: AUTO_SELECTED`
+- `archival_final_version_id`
+- `archival_final_asset_id`
+- `archival_final_basis`
 
-ومع ذلك تظل الـCase محفوظة بالكامل.
+## 4) لا تخلط Final Asset الأرشيفية مع Customer Approval
 
-## 4) أوامر التنفيذ منفصلة
+اختيار Final Asset للأرشفة لا يعني أن العميل وافق عليها.
+
+حالة موافقة العميل — إن احتجناها — تبقى مستقلة:
+
+`customer_approval_status: CONFIRMED | NOT_DOCUMENTED | REJECTED`
+
+إذا لا يوجد دليل موافقة عميل:
+
+`customer_approval_status: NOT_DOCUMENTED`
+
+وده لا يمنع الحفظ ولا Final Selection الأرشيفية.
+
+## 5) أوامر التنفيذ منفصلة
 
 الأوامر مثل:
 - `استخرج`
@@ -61,44 +80,28 @@
 
 هي أوامر تنفيذ/توليد/تعديل حسب السياق.
 
-لا يجوز تحويل Auto-Persist أو أي أمر تسجيل إلى إعادة توليد صورة.
+لا يجوز تحويل Auto-Persist أو اختيار Final Asset الأرشيفية إلى إعادة توليد صورة.
 
-## 5) بعد فشل Image Generation
+## 6) بعد فشل Image Generation
 
 إذا فشل توليد/تعديل الصورة أو لم ينتج ملفًا قابلًا للمراجعة:
 
 1. سجل المحاولة كـ`FAILED_NO_RESULT`.
 2. لا تنشئ `result_asset_id` وهمي.
-3. لا تعتبر التصميم Final.
-4. أكمل حفظ الـCase تلقائيًا رغم الفشل.
-5. لا تعاود تشغيل التوليد إلا بأمر تنفيذ جديد وصريح من المستخدم.
+3. أكمل حفظ الـCase تلقائيًا رغم الفشل.
+4. لا تعاود تشغيل التوليد إلا بأمر تنفيذ جديد وصريح.
+5. إذا توجد نتيجة ناجحة أقدم غير مرفوضة، يمكن اختيارها Final Asset للأرشفة تلقائيًا.
 
-## 6) روابط التحقق الاختيارية
+## 7) روابط التحقق الاختيارية
 
 بعد Auto-Persist الناجح، اعرض عند توفرها:
 - Case folder URL على Google Drive.
 - روابط كل Asset مرفوع فعليًا.
 - Case ID.
 - عدد LINKED / PENDING_UPLOAD / MISSING.
+- archival_final_status / archival_final_asset_id.
 
-هذه الروابط للتأكيد الاختياري فقط، وليست Gate لإتمام الحفظ.
-
-## 7) فصل حالات الاعتماد
-
-استخدم مفاهيم مستقلة:
-
-- `memory_persistence_status: PERSISTED | PARTIAL | FAILED`
-- `design_final_approval: FINAL_APPROVED | NOT_CONFIRMED`
-
-يمكن أن تكون:
-
-`memory_persistence_status: PERSISTED`
-
-وفي نفس الوقت:
-
-`design_final_approval: NOT_CONFIRMED`
-
-وده طبيعي.
+هذه الروابط للتأكيد الاختياري فقط، وليست Gate لإتمام الحفظ أو Final Selection.
 
 ## 8) Safe to delete
 
@@ -106,6 +109,7 @@
 - Case record محفوظ فعليًا.
 - Timeline والمحاولات محفوظة.
 - كل Asset متاح تم ربطه أو وسمه بوضوح `PENDING_UPLOAD/MISSING`.
+- Final Selection الأرشيفية سُجلت أو تم تسجيل `NO_VALID_FINAL_ASSET` بوضوح.
 - لا توجد بيانات مهمة معروفة ما زالت فقط داخل الشات.
 
 عند تحقق ذلك:
@@ -118,6 +122,6 @@
 
 ## 9) قاعدة نهائية
 
-`AUTO PERSISTENCE != DESIGN FINAL APPROVAL != EXECUTION COMMAND`
+`AUTO PERSISTENCE + AUTO ARCHIVAL FINAL SELECTION != CUSTOMER APPROVAL != EXECUTION COMMAND`
 
-الحفظ تلقائي. اعتماد التصميم النهائي يعتمد على Evidence. التنفيذ يحتاج أمر تنفيذ مستقل.
+الحفظ واختيار Final Asset للأرشفة تلقائيان. موافقة العميل حقيقة مستقلة إن وُجدت. التنفيذ يحتاج أمر تنفيذ مستقل.
