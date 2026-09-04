@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Matbagy Design Workflow MVP - independent experimental static app.">
+  <title>Matbagy Design Workflow | فكرتك جاهزة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="التنقل الرئيسي">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">M</div>
+        <div>
+          <strong>Matbagy</strong>
+          <span>فكرتك جاهزة</span>
+        </div>
+      </div>
+
+      <nav class="nav-list" id="navList">
+        <button class="nav-item is-active" type="button" data-view="dashboard">
+          <span class="nav-icon" aria-hidden="true">⌂</span>
+          <span>لوحة التحكم</span>
+        </button>
+        <button class="nav-item" type="button" data-view="templates">
+          <span class="nav-icon" aria-hidden="true">▦</span>
+          <span>مكتبة القوالب</span>
+        </button>
+        <button class="nav-item" type="button" data-view="new-request">
+          <span class="nav-icon" aria-hidden="true">＋</span>
+          <span>طلب تصميم جديد</span>
+        </button>
+        <button class="nav-item" type="button" data-view="workflow">
+          <span class="nav-icon" aria-hidden="true">↻</span>
+          <span>مسار الطلبات</span>
+        </button>
+        <button class="nav-item" type="button" data-view="proofs">
+          <span class="nav-icon" aria-hidden="true">✓</span>
+          <span>اعتماد البروفة</span>
+        </button>
+        <button class="nav-item" type="button" data-view="preflight">
+          <span class="nav-icon" aria-hidden="true">⚑</span>
+          <span>فحص الإنتاج</span>
+        </button>
+        <button class="nav-item" type="button" data-view="activity">
+          <span class="nav-icon" aria-hidden="true">≡</span>
+          <span>سجل النشاط</span>
+        </button>
+        <button class="nav-item" type="button" data-view="settings">
+          <span class="nav-icon" aria-hidden="true">⚙</span>
+          <span>الإعدادات</span>
+        </button>
+        <button class="nav-item" type="button" data-view="backup">
+          <span class="nav-icon" aria-hidden="true">⇅</span>
+          <span>نسخ واسترجاع JSON</span>
+        </button>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="mobile-menu" type="button" id="mobileMenu" aria-label="فتح القائمة">☰</button>
+        <div>
+          <p class="eyebrow">Matbagy Design Workflow</p>
+          <h1 id="pageTitle">لوحة التحكم</h1>
+        </div>
+        <button class="primary-action" type="button" data-view-jump="new-request">طلب جديد</button>
+      </header>
+
+      <section class="safety-banner" role="status">
+        نسخة تجريبية مستقلة — غير متصلة بـ TrendOS
+      </section>
+
+      <section class="view is-visible" id="dashboard" aria-labelledby="dashboardTitle">
+        <div class="section-heading">
+          <div>
+            <h2 id="dashboardTitle">ملخص التشغيل</h2>
+            <p>بيانات تجريبية محفوظة محليًا في هذا المتصفح فقط.</p>
+          </div>
+          <button class="ghost-action" type="button" id="seedDemoData">إضافة طلبات تجريبية</button>
+        </div>
+
+        <div class="metric-grid" id="metricGrid"></div>
+
+        <div class="dashboard-grid">
+          <article class="panel">
+            <div class="panel-header">
+              <h3>الطلبات النشطة</h3>
+              <span id="activeCount">0</span>
+            </div>
+            <div class="request-list compact" id="recentRequests"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h3>تنبيهات الإنتاج</h3>
+              <span id="riskCount">0</span>
+            </div>
+            <div class="check-list" id="riskList"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="templates" aria-labelledby="templatesTitle">
+        <div class="section-heading">
+          <div>
+            <h2 id="templatesTitle">مكتبة قوالب التصميم</h2>
+            <p>قوالب قياسية لاختبار سير العمل، مع المقاس وعدد الصور المطلوب.</p>
+          </div>
+          <button class="ghost-action" type="button" id="resetTemplates">استعادة القوالب الأساسية</button>
+        </div>
+        <div class="template-grid" id="templateGrid"></div>
+      </section>
+
+      <section class="view" id="new-request" aria-labelledby="newRequestTitle">
+        <div class="section-heading">
+          <div>
+            <h2 id="newRequestTitle">طلب تصميم جديد</h2>
+            <p>استخدم أسماء تجريبية فقط. لا تدخل بيانات عملاء حقيقية.</p>
+          </div>
+        </div>
+
+        <form class="form-grid" id="requestForm">
+          <label>
+            <span>عنوان الطلب</span>
+            <input name="title" required maxlength="80" placeholder="مثال: تجربة كولاج عيد ميلاد">
+          </label>
+
+          <label>
+            <span>القالب</span>
+            <select name="templateId" required id="templateSelect"></select>
+          </label>
+
+          <label>
+            <span>اسم/نص مطلوب</span>
+            <input name="requiredText" required maxlength="120" placeholder="اسم تجريبي أو نص التصميم">
+          </label>
+
+          <label>
+            <span>عدد الصور المستلمة</span>
+            <input name="imageCount" required min="0" max="30" type="number" value="0">
+          </label>
+
+          <label class="span-2">
+            <span>أسماء الصور التجريبية</span>
+            <textarea name="imageNames" rows="4" placeholder="img-01.jpg&#10;img-02.jpg"></textarea>
+          </label>
+
+          <label>
+            <span>اسم ملف الخرج</span>
+            <input name="outputFile" maxlength="120" placeholder="design-proof-v1.pdf">
+          </label>
+
+          <label>
+            <span>مصمم مسؤول</span>
+            <input name="designer" maxlength="80" placeholder="اسم تجريبي">
+          </label>
+
+          <label class="span-2">
+            <span>ملاحظات الإنتاج</span>
+            <textarea name="productionNotes" rows="4" placeholder="تفاصيل القص، الخامة، أو التغليف التجريبية"></textarea>
+          </label>
+
+          <div class="form-actions span-2">
+            <button class="primary-action" type="submit">حفظ الطلب</button>
+            <button class="ghost-action" type="reset">مسح النموذج</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="view" id="workflow" aria-labelledby="workflowTitle">
+        <div class="section-heading">
+          <div>
+            <h2 id="workflowTitle">مسار حالات الطلب</h2>
+            <p>غيّر الحالة وتابع كل خطوة في سجل النشاط المحلي.</p>
+          </div>
+        </div>
+        <div class="toolbar">
+          <label>
+            <span>تصفية بالحالة</span>
+            <select id="statusFilter"></select>
+          </label>
+          <label>
+            <span>بحث</span>
+            <input id="requestSearch" placeholder="ابحث بعنوان أو رقم الطلب">
+          </label>
+        </div>
+        <div class="request-list" id="workflowList"></div>
+      </section>
+
+      <section class="view" id="proofs" aria-labelledby="proofsTitle">
+        <div class="section-heading">
+          <div>
+            <h2 id="proofsTitle">اعتماد البروفة</h2>
+            <p>الاعتماد يقفل النسخة المعتمدة ويمنع تعديلها قبل الإنتاج.</p>
+          </div>
+        </div>
+        <div class="request-list" id="proofList"></div>
+      </section>
+
+      <section class="view" id="preflight" aria-labelledby="preflightTitle">
+        <div class="section-heading">
+          <div>
+            <h2 id="preflightTitle">فحص ما قبل الإنتاج</h2>
+            <p>لا يمكن اعتبار الطلب جاهزًا للإنتاج قبل اعتماد البروفة واكتمال الفحص.</p>
+          </div>
+        </div>
+        <div class="request-list" id="preflightList"></div>
+      </section>
+
+      <section class="view" id="activity" aria-labelledby="activityTitle">
+        <div class="section-heading">
+          <div>
+            <h2 id="activityTitle">سجل النشاط</h2>
+            <p>سجل محلي للأحداث التجريبية داخل هذا المتصفح.</p>
+          </div>
+          <button class="danger-action" type="button" id="clearActivity">مسح السجل</button>
+        </div>
+        <div class="activity-list" id="activityList"></div>
+      </section>
+
+      <section class="view" id="settings" aria-labelledby="settingsTitle">
+        <div class="section-heading">
+          <div>
+            <h2 id="settingsTitle">الإعدادات</h2>
+            <p>إعدادات محلية لا تغادر المتصفح.</p>
+          </div>
+        </div>
+        <form class="settings-panel" id="settingsForm">
+          <label>
+            <span>اسم مساحة العمل التجريبية</span>
+            <input name="workspaceName" maxlength="80">
+          </label>
+          <label>
+            <span>بادئة أرقام الطلبات</span>
+            <input name="requestPrefix" maxlength="12">
+          </label>
+          <label>
+            <span>عتبة تحذير جودة الصورة</span>
+            <select name="qualityThreshold">
+              <option value="low">منخفضة</option>
+              <option value="medium">متوسطة</option>
+              <option value="high">عالية</option>
+            </select>
+          </label>
+          <button class="primary-action" type="submit">حفظ الإعدادات</button>
+        </form>
+
+        <article class="panel margin-top">
+          <div class="panel-header">
+            <h3>منطقة آمنة</h3>
+          </div>
+          <p class="muted">يمسح هذا الإجراء الطلبات التجريبية والقوالب المعدلة وسجل النشاط من هذا المتصفح فقط.</p>
+          <button class="danger-action" type="button" id="resetAllData">مسح كل البيانات المحلية</button>
+        </article>
+      </section>
+
+      <section class="view" id="backup" aria-labelledby="backupTitle">
+        <div class="section-heading">
+          <div>
+            <h2 id="backupTitle">نسخ واسترجاع JSON</h2>
+            <p>صدّر نسخة اختبارية أو استرجعها محليًا بدون أي خادم.</p>
+          </div>
+        </div>
+
+        <div class="backup-grid">
+          <article class="panel">
+            <div class="panel-header">
+              <h3>تصدير</h3>
+            </div>
+            <p class="muted">ينشئ ملف JSON يحتوي على القوالب والطلبات والإعدادات وسجل النشاط التجريبي.</p>
+            <button class="primary-action" type="button" id="exportBackup">تصدير JSON</button>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h3>استيراد</h3>
+            </div>
+            <label class="file-drop">
+              <span>اختر ملف JSON</span>
+              <input id="importBackup" type="file" accept="application/json,.json">
+            </label>
+            <p class="muted">الاستيراد يستبدل البيانات التجريبية الحالية بعد التحقق من بنية الملف.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <template id="emptyStateTemplate">
+    <div class="empty-state">
+      <strong>لا توجد بيانات بعد</strong>
+      <span>ابدأ بإضافة طلب تصميم تجريبي.</span>
+    </div>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
