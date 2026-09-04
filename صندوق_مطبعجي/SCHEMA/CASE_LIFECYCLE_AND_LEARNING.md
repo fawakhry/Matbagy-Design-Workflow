@@ -60,8 +60,10 @@
 - `customer_feedback`
 - `chatgpt_opinion`
 - `gemini_opinion`
-- `version_status`: DRAFT | REVIEWED | NEEDS_CHANGE | SENT_TO_CUSTOMER | APPROVED | REJECTED | SUPERSEDED
+- `version_status`: DRAFT | REVIEWED | NEEDS_CHANGE | SENT_TO_CUSTOMER | APPROVED | REJECTED | SUPERSEDED | FAILED_NO_RESULT
 - `approval_evidence`
+
+`FAILED_NO_RESULT` يستخدم عندما تم تشغيل محاولة لكن لم تنتج ملفًا/صورة قابلة للمراجعة، حتى لا نسجل فشل التنفيذ كنسخة ناجحة.
 
 لا تستبدل نسخة قديمة بصمت. التاريخ يبقى محفوظًا.
 
