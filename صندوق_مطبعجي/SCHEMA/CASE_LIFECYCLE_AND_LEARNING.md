@@ -14,10 +14,21 @@
 - `REVISION_REQUIRED`: توجد تعديلات مطلوبة قبل الاعتماد.
 - `WAITING_CUSTOMER_APPROVAL`: تم إرسال Proof/نسخة للعميل وننتظر رأيه.
 - `FINAL_APPROVED`: توجد موافقة نهائية مؤكدة على نسخة محددة.
-- `CLOSED`: تم إغلاق الحالة بعد حفظ القرار النهائي والدروس.
+- `CLOSED`: تم إغلاق الحالة بعد حفظ القرار النهائي والدروس الأساسية.
 - `REOPENED`: أعيد فتح الحالة لاحقًا مع الحفاظ على نفس Case ID والتاريخ.
 
 `watch_status` يظل `ACTIVE` ما دامت الحالة ليست `CLOSED`. عند الإغلاق يتحول إلى `STOPPED`. عند إعادة الفتح يعود `ACTIVE`.
+
+بعد `CLOSED` لا تنتهي دورة التعلم؛ يبدأ إجراء مستقل اسمه `KNOWLEDGE_EXTRACTION` طبقًا للعقد:
+
+`SCHEMA/KNOWLEDGE_EXTRACTION_CONTRACT.md`
+
+ويستخدم الحقل:
+
+`knowledge_status`
+
+بالقيم:
+`NOT_READY | PENDING_EXTRACTION | CANDIDATES_CREATED | REVIEW_REQUIRED | VALIDATED | PROMOTED | NO_REUSABLE_KNOWLEDGE`
 
 ## 2) فصل الحقيقة عن الآراء
 
@@ -124,7 +135,34 @@
 
 لا ترفع قاعدة إلى Global Rule لمجرد اقتراح AI. يجب أن يكون لها Evidence مناسب، ويفضل اعتماد المستخدم عند كونها قاعدة مؤثرة.
 
-## 8) قياس النجاح مستقبلًا
+## 8) Knowledge Extraction — إلزامي بعد الإغلاق
+
+بعد حفظ `LESSONS.md` تبدأ مرحلة أعمق لتحويل الدرس إلى معرفة قابلة للاستدعاء عبر المشروع.
+
+التسلسل:
+
+`FINAL_APPROVED -> CLOSED -> PENDING_EXTRACTION -> CANDIDATES_CREATED -> VALIDATED/PROMOTED`
+
+أو إذا لا يوجد شيء يستحق التعميم:
+
+`CLOSED -> NO_REUSABLE_KNOWLEDGE`
+
+المعرفة تحفظ في السجل المركزي:
+
+`صندوق_مطبعجي/KNOWLEDGE/INDEX.md`
+
+وتتبع العقد:
+
+`صندوق_مطبعجي/SCHEMA/KNOWLEDGE_EXTRACTION_CONTRACT.md`
+
+الفرق بين `LESSONS.md` وKnowledge Registry:
+
+- `LESSONS.md` = ماذا تعلمنا من هذه Case تحديدًا.
+- `KNOWLEDGE/INDEX.md` = ما الذي ثبت أنه يستحق أن تستخدمه حالات أخرى، وبأي Scope وEvidence.
+
+لا يجوز اعتبار كل Lesson قاعدة عامة.
+
+## 9) قياس النجاح مستقبلًا
 
 احتفظ بما يسمح لاحقًا بقياس:
 - عدد النسخ قبل الاعتماد.
@@ -134,10 +172,12 @@
 - اقتراحات Gemini التي نجحت.
 - حالات اختلاف الرأيين ومن كان أقرب للقرار النهائي.
 - Patterns التي تقلل وقت التصميم والتعديلات.
+- Knowledge Candidates الأكثر استخدامًا ونجاحًا.
+- القواعد التي تم Supersede لها بسبب Evidence أحدث.
 
 الهدف ليس تقييم النماذج لمجرد التقييم، بل تحسين سرعة وجودة إنتاج مطبعجي.
 
-## 9) إعادة فتح Case
+## 10) إعادة فتح Case
 
 إذا أعيد فتح Case بعد الإغلاق:
 - لا تنشئ Case ID جديدة لنفس الشغل.
@@ -146,8 +186,9 @@
 - سجّل `reopened_at` وسبب إعادة الفتح.
 - ابدأ Version جديدة بعد آخر Version محفوظة.
 - لا تمسح Lessons أو القرار القديم؛ أضف Timeline جديدًا.
+- إذا ظهرت Evidence جديدة تناقض Knowledge مستخرجة قديمة، لا تمسح المعرفة القديمة بصمت؛ راجع Validation أو أنشئ Superseding Rule.
 
-## 10) قاعدة الأمان
+## 11) قاعدة الأمان
 
 لا يجوز لأي Agent:
 - اختراع اعتماد نهائي.
@@ -156,3 +197,15 @@
 - حذف نسخة مرفوضة من التاريخ.
 - مسح خلاف بين ChatGPT وGemini.
 - اعتبار رأي AI حقيقة عميل.
+- تحويل Lesson إلى Global Rule بدون Evidence مناسب.
+- رفع Confidence لمجرد تكرار رأي AI.
+
+## 12) الهدف النهائي
+
+كل Case ناجحة أو فاشلة يجب أن تزيد قيمة النظام بدل أن تختفي في الأرشيف.
+
+الناتج المستهدف بمرور الوقت:
+
+`Cases -> Evidence -> Lessons -> Validated Knowledge -> Better Next Case`
+
+وهذا هو أساس "عقل مطبعجي المتراكم".
