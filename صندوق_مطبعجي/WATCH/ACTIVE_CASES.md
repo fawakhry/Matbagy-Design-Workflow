@@ -20,6 +20,42 @@
 - `open_disagreements`: `0`
 - `close_condition`: explicit user final approval / `تم` / `اعتمد نهائي` / `اقفل الكيس`
 
+## DESIGN-2026-000003
+
+- `case_id`: `DESIGN-2026-000003`
+- `order_id`: `UNKNOWN`
+- `room_path`: `صندوق_مطبعجي/ROOMS/2026/DESIGN-2026-000003/`
+- `room_status`: `OPEN`
+- `case_phase`: `OPEN`
+- `watch_status`: `ACTIVE`
+- `approval_status`: `NOT_CONFIRMED`
+- `ai_authority`: `ADVISORY_ONLY`
+- `current_version`: `V1`
+- `next_version`: `V2`
+- `chatgpt_status`: `SYNCED`
+- `gemini_status`: `NOT_REQUESTED`
+- `user_decision`: `PENDING_FINAL_APPROVAL`
+- `open_disagreements`: `0`
+- `close_condition`: explicit user final approval / `تم` / `اعتمد نهائي` / `اقفل الكيس`
+
+## DESIGN-2026-000004
+
+- `case_id`: `DESIGN-2026-000004`
+- `order_id`: `UNKNOWN`
+- `room_path`: `صندوق_مطبعجي/ROOMS/2026/DESIGN-2026-000004/`
+- `room_status`: `OPEN`
+- `case_phase`: `OPEN`
+- `watch_status`: `ACTIVE`
+- `approval_status`: `NOT_CONFIRMED`
+- `ai_authority`: `ADVISORY_ONLY`
+- `current_version`: `V1`
+- `next_version`: `V2`
+- `chatgpt_status`: `SYNCED`
+- `gemini_status`: `NOT_REQUESTED`
+- `user_decision`: `PENDING_FINAL_APPROVAL`
+- `open_disagreements`: `0`
+- `close_condition`: explicit user final approval / `تم` / `اعتمد نهائي` / `اقفل الكيس`
+
 ## Watch rule
 
 - الحالات المفتوحة أو تحت المراجعة أو المنتظرة أو المعاد فتحها تظل هنا.
