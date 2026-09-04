@@ -155,23 +155,6 @@
 - `user_decision`: `PENDING_FINAL_APPROVAL`
 - `open_disagreements`: `0`
 
-## DESIGN-2026-000013
-
-- `case_id`: `DESIGN-2026-000013`
-- `order_id`: `UNKNOWN`
-- `room_path`: `صندوق_مطبعجي/ROOMS/2026/DESIGN-2026-000013/`
-- `room_status`: `OPEN`
-- `case_phase`: `OPEN`
-- `watch_status`: `ACTIVE`
-- `approval_status`: `NOT_CONFIRMED`
-- `ai_authority`: `ADVISORY_ONLY`
-- `current_version`: `V2`
-- `next_version`: `V3`
-- `chatgpt_status`: `SYNCED`
-- `gemini_status`: `NOT_REQUESTED`
-- `user_decision`: `PENDING_FINAL_APPROVAL`
-- `open_disagreements`: `0`
-
 ## DESIGN-2026-000100
 
 - `case_id`: `DESIGN-2026-000100`
@@ -207,6 +190,19 @@
 - `open_disagreements`: `0`
 
 ## Recently closed
+
+### DESIGN-2026-000013
+
+- `case_id`: `DESIGN-2026-000013`
+- `room_path`: `صندوق_مطبعجي/ROOMS/2026/DESIGN-2026-000013/`
+- `room_status`: `CLOSED`
+- `case_phase`: `CLOSED`
+- `watch_status`: `STOPPED`
+- `approval_status`: `FINAL_APPROVED`
+- `current_version`: `V2`
+- `user_decision`: `FINAL_APPROVED_BY_USER`
+- `knowledge_status`: `PENDING_EXTRACTION`
+- `closed_at`: `2026-09-04T06:07:41+03:00`
 
 ### DESIGN-2026-000007
 
