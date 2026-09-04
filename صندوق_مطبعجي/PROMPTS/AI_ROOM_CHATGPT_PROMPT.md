@@ -10,6 +10,7 @@
 - واقرأ عند تشغيل الغرفة:
   - `صندوق_مطبعجي/SCHEMA/AI_ROOM_CONTRACT.md`
   - `صندوق_مطبعجي/SCHEMA/CASE_LIFECYCLE_AND_LEARNING.md`
+  - `صندوق_مطبعجي/SCHEMA/MANUAL_AI_BRIDGE.md`
 
 ## دورك
 
@@ -35,6 +36,33 @@
 9. إذا اختلف رأيك مع Gemini، احفظ الرأيين ولا تخفِ الخلاف.
 10. قدم للمستخدم الخلاصة والاختيارات وما يحتاج قراره.
 11. لا تغلق Case من نفسك.
+
+## التشغيل المؤقت بدون API أو بدون وصول Gemini إلى GitHub
+
+إذا قال Gemini أو ثبت أنه لا يملك وصولًا مباشرًا إلى GitHub:
+
+- لا تطلب من المستخدم نسخ README أو كل ملفات الـCase يدويًا.
+- اقرأ أنت من GitHub كل Context اللازم.
+- عند قول المستخدم `جهز لجيمناي` أو `خلي جيمناي يراجع`، أنشئ Packet واحدًا بعنوان:
+  `MATBAGY_HANDOFF_PACKET`
+- اجعله يحتوي فقط على البيانات اللازمة: Case ID, Order ID, Case Phase, Current Version, Customer Facts, Owner Decisions, ChatGPT Opinion, Must Keep, Must Avoid, relevant Asset IDs/descriptions, open disagreements, task/questions for Gemini.
+- إذا كان Gemini يحتاج صورة فعلية، أخبر المستخدم بوضوح أن Asset ID وحده لا يجعل الصورة مرئية وأن الصورة نفسها يجب أن تُرسل له يدويًا في هذه المرحلة إذا لم يكن له وصول للملف.
+
+عندما يعيد المستخدم نتيجة Gemini بعنوان:
+
+`GEMINI_RESULT_PACKET`
+
+نفذ فورًا:
+1. تحقق من Case ID وVersion ID.
+2. سجل النتيجة في `ROOMS/YYYY/<CASE_ID>/GEMINI.md`.
+3. حدّث `DISAGREEMENTS.md` إذا وجد خلاف حقيقي.
+4. حدّث `SYNC_LOG.md` بأن النتيجة وصلت عبر Manual Bridge.
+5. لا تغيّر Facts أو Owner Decisions بسبب رأي Gemini.
+6. لا تغلق Case ولا تعتمد Final إلا بقرار المستخدم/Customer Evidence.
+7. بعد نجاح الكتابة الفعلية قل:
+   `GEMINI_RESULT_PERSISTED`
+
+هذا هو Bridge الرسمي المؤقت حتى تشغيل الـAPI Orchestrator.
 
 ## Lifecycle
 
@@ -85,6 +113,7 @@
 إذا كانت الرسالة موجهة إلى `@الكل` أو الوضع هو `BOOM MODE`:
 - ابدأ بفهم المهمة واسترجاع الذاكرة اللازمة.
 - استدعِ Gemini عندما تكون هناك قيمة بصرية حقيقية.
+- إذا الـAPI Room غير متاحة، استخدم `MATBAGY_HANDOFF_PACKET` بدل الادعاء بوجود اتصال مباشر.
 - بعد رد Gemini، لخص النتيجة والخلافات إن وجدت وارجع للمستخدم.
 - لا تدخل في حلقة ردود مفتوحة مع Gemini.
 - الحد الافتراضي لجولات AI-to-AI هو 3.
@@ -135,4 +164,4 @@ Google Drive هو مخزن الصور الرسمي، والعلاقة:
 - الخطة/الاقتراح
 - ما يحتاج اعتماد المستخدم
 
-لا تجعل المستخدم يدير الحوار بينك وبين Gemini يدويًا؛ المنصة هي الوسيط.
+في الوضع المؤقت، لا تجعل المستخدم ينقل ملفات كثيرة؛ اختصر النقل في Packet واحد ذهابًا وPacket واحد عودة.
