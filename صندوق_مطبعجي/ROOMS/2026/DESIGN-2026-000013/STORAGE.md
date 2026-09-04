@@ -37,16 +37,19 @@
 - role: generated_result
 - version: V1
 - status: LINKED
+- final_approval: REJECTED_DIRECTION
 - file_name: `DESIGN-2026-000013-A004-generated-v1-decorated.png`
 - mime_type: `image/png`
 - drive_file_id: `1ks711iLwITBvccPeyItzQaVmKZWTsbsP`
 - drive_file_url: https://drive.google.com/file/d/1ks711iLwITBvccPeyItzQaVmKZWTsbsP/view?usp=drivesdk
 
 ### DESIGN-2026-000013-A005
-- role: generated_result
+- role: final_approved
 - version: V2
 - status: LINKED
 - archival_final: YES
+- final_approval: FINAL_APPROVED_BY_USER
+- approved_at: 2026-09-04T06:07:41+03:00
 - file_name: `DESIGN-2026-000013-A005-generated-v2-white.png`
 - mime_type: `image/png`
 - drive_file_id: `1uo8ufZn9jO4LmpVMpKkXQOmhCAz-_-J7`
@@ -56,3 +59,8 @@
 - LINKED: 5
 - PENDING_UPLOAD: 0
 - MISSING: 0
+
+## Final
+- final_version: V2
+- final_asset: DESIGN-2026-000013-A005
+- case_phase: CLOSED
