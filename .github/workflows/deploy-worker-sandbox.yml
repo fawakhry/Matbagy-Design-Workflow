@@ -2,6 +2,9 @@ name: Deploy Matbagy Worker Sandbox
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - sandbox/deploy-live-ai
 
 permissions:
   contents: read
