@@ -37,3 +37,5 @@ jobs:
         run: node runtime/runtime-v06.test.mjs
       - name: Readiness gate tests
         run: node runtime/readiness.test.mjs
+      - name: Live AI Sandbox provider tests
+        run: node runtime/live-providers.test.mjs
