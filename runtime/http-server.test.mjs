@@ -9,7 +9,7 @@ const base = `http://127.0.0.1:${port}`;
 try {
   const health = await fetch(`${base}/health`).then((r) => r.json());
   assert.equal(health.ok, true);
-  assert.equal(health.version, '0.4');
+  assert.equal(health.version, '0.5');
   assert.equal(health.production_integrations, false);
 
   const body = {
@@ -26,9 +26,21 @@ try {
     }
   };
 
+  const unauthenticated = await fetch(`${base}/v1/turn`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  assert.equal(unauthenticated.status, 401);
+
   const firstRes = await fetch(`${base}/v1/turn`, {
     method: 'POST',
-    headers: { 'content-type': 'application/json', 'idempotency-key': 'test-1', 'x-request-id': 'req-1' },
+    headers: {
+      'content-type': 'application/json',
+      'authorization': 'Bearer matbagy-local-test-token',
+      'idempotency-key': 'test-1',
+      'x-request-id': 'req-1'
+    },
     body: JSON.stringify(body),
   });
   assert.equal(firstRes.status, 200);
@@ -40,7 +52,12 @@ try {
 
   const replay = await fetch(`${base}/v1/turn`, {
     method: 'POST',
-    headers: { 'content-type': 'application/json', 'idempotency-key': 'test-1', 'x-request-id': 'req-2' },
+    headers: {
+      'content-type': 'application/json',
+      'authorization': 'Bearer matbagy-local-test-token',
+      'idempotency-key': 'test-1',
+      'x-request-id': 'req-2'
+    },
     body: JSON.stringify(body),
   }).then((r) => r.json());
   assert.equal(replay.idempotent_replay, true);
@@ -48,12 +65,15 @@ try {
 
   const invalid = await fetch(`${base}/v1/turn`, {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers: {
+      'content-type': 'application/json',
+      'authorization': 'Bearer matbagy-local-test-token'
+    },
     body: JSON.stringify({ userRequest: 'missing case' }),
   });
   assert.equal(invalid.status, 400);
 
-  console.log('Matbagy HTTP Runtime v0.4 tests: PASS');
+  console.log('Matbagy HTTP Runtime v0.5 tests: PASS');
 } finally {
   await new Promise((resolve) => server.close(resolve));
 }
