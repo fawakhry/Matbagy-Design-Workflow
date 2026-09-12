@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/wrangler.json",
+  "name": "matbagy-runtime-sandbox",
+  "main": "cloudflare-worker.mjs",
+  "compatibility_date": "2026-09-12",
+  "workers_dev": true,
+  "vars": {
+    "MATBAGY_RUNTIME_MODE": "SANDBOX",
+    "OPENAI_MODEL": "gpt-5.6-terra",
+    "GEMINI_MODEL": "gemini-3.8-flash",
+    "GITHUB_SANDBOX_BRANCH": "sandbox/runtime-v06",
+    "GITHUB_SANDBOX_PREFIX": "runtime-sandbox/",
+    "DRIVE_SANDBOX_FOLDER_ID": "1pTM4Xw98qnd1XoPKpBDVel21CXCQpZoF",
+    "CANONICAL_DRIVE_ROOT_ID": "1kP_JAO-ZOJltX9FCkAsylxYAfRar-RQV"
+  },
+  "secrets": {
+    "required": [
+      "OPENAI_API_KEY",
+      "GEMINI_API_KEY",
+      "RUNTIME_BEARER_TOKEN"
+    ]
+  },
+  "observability": {
+    "enabled": true
+  }
+}
