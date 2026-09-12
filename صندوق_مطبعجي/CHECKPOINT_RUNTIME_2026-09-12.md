@@ -2,7 +2,7 @@
 
 ## Status
 
-`RUNTIME_V0.7 / SANDBOX_LIVE_SMOKE_PASS / CI_INITIAL_RUN_SUCCESS / PRODUCTION_DECISION_GATE`
+`RUNTIME_V0.9 / LIVE_AI_SANDBOX_CODE_READY / CLOUD_SANDBOX_PERSISTENCE_CODE_READY / CI_GREEN / NOT_DEPLOYED`
 
 ## Implemented
 
@@ -22,7 +22,7 @@
 ### v0.3 — Provider + Turn Runtime
 - Mock ChatGPT/Gemini providers.
 - Truth-label validation.
-- Full local orchestration turn.
+- Full orchestration turn.
 
 ### v0.4 — HTTP Boundary
 - Local Node HTTP service.
@@ -30,20 +30,12 @@
 - Request IDs, idempotency and JSON limits.
 
 ### v0.5 — Contract Hardening
-- Test-only Bearer auth and operator role.
-- Memory/JSONL audit interfaces.
+- Test auth and audit interfaces.
 - GitHub/Drive contracts with mocks.
 - Provider timeout/retry/circuit breaker.
 - Test rate limiter.
-- Expanded audit events.
 
 ### v0.6 — Sandbox Integration Harness
-Files:
-- `runtime/sandbox-config.mjs`
-- `runtime/sandbox-harness.mjs`
-- `runtime/runtime-v06.test.mjs`
-- `runtime/SANDBOX_TARGETS.md`
-
 Boundaries:
 - GitHub sandbox branch: `sandbox/runtime-v06`.
 - GitHub allowed write prefix: `runtime-sandbox/`.
@@ -51,47 +43,114 @@ Boundaries:
 - Drive sandbox folder ID: `1pTM4Xw98qnd1XoPKpBDVel21CXCQpZoF`.
 - Canonical paths/Drive root are rejected by guard logic.
 
-Live verification performed:
+Live verification already performed:
 - GitHub temporary marker create -> fetch/readback -> delete: PASS.
 - Drive temporary folder create -> metadata/readback -> delete: PASS.
 - Canonical Cases and production folders were not used as smoke targets.
 
 ### v0.7 — Readiness + CI
+- GitHub Actions test workflow active.
+- Readiness is fail-closed.
+- Production remains false by construction.
+- Owner approved architecture: Cloudflare Workers + live OpenAI + Gemini in Sandbox first.
+- Readiness next gate advanced from architecture decision to `CREDENTIAL_SETUP_AND_CLOUDFLARE_DEPLOY`.
+
+### v0.8 — Live AI Sandbox providers
 Files:
-- `runtime/readiness.mjs`
-- `runtime/readiness.test.mjs`
-- `.github/workflows/runtime-tests.yml`
+- `runtime/live-providers.mjs`
+- `runtime/live-providers.test.mjs`
+- `runtime/cloudflare-worker.mjs`
+- `runtime/wrangler.jsonc`
 
 Implemented:
-- Fail-closed readiness gate.
-- Production remains false by construction.
-- Owner decision is required only after sandbox + tests are green.
-- GitHub Actions suite runs runtime tests with Node 22 and no secrets.
+- OpenAI Responses API provider adapter.
+- Gemini Interactions API provider adapter.
+- Server-side Cloudflare Worker boundary.
+- Sandbox Bearer auth and rate limit.
+- Reuses provider timeout/retry/circuit breaker.
+- Required secrets are server-side bindings; no values are in GitHub.
+- `/health` and `/v1/turn` remain sandbox-only.
 
-CI evidence:
-- Workflow: `Matbagy Runtime Tests`.
-- First push run ID: `34713266546`.
-- Conclusion: `success`.
+### v0.9 — Cloud Sandbox persistence
+Files:
+- `runtime/cloud-sandbox-persistence.mjs`
+- `runtime/cloud-sandbox-persistence.test.mjs`
+- `runtime/CLOUDFLARE_SANDBOX_DEPLOYMENT.md`
 
-## Safety Boundary
+Implemented:
+- GitHub REST writer restricted to sandbox branch/path.
+- Google OAuth refresh token provider.
+- Google Drive multipart writer restricted to exact sandbox folder ID.
+- Optional evidence write to both GitHub + Drive sandboxes.
+- `SANDBOX_PERSISTENCE_ENABLED=false` is the default.
+- When persistence is enabled, missing credentials or external write failure fails closed.
+- No fallback to canonical Case/Drive targets.
 
-Still NOT activated:
-- Live OpenAI provider.
-- Live Gemini provider.
-- Production GitHub/Drive runtime adapters.
-- Production credentials.
-- Production auth provider.
-- Public server deployment.
+### Deployment workflow
+File:
+`.github/workflows/deploy-worker-sandbox.yml`
 
-No secrets or production customer data were added.
+Rules:
+- `workflow_dispatch` only.
+- Runs the complete Runtime test suite before deployment.
+- Requires Cloudflare GitHub Actions deployment credentials.
+- Does not activate Production.
 
-## Current Decision Gate
+## CI Evidence
 
-`OWNER_DECISION_FOR_LIVE_PROVIDER_AND_DEPLOYMENT`
+Latest verified Runtime CI before this checkpoint update:
+- Commit: `0f57a9c6dd162b6edfb9dee8f88b00a2153a58c4`
+- Workflow: `Matbagy Runtime Tests`
+- Run ID: `34713837364`
+- Conclusion: `success`
 
-The system is now ready to proceed to live-provider/deployment preparation, but crossing that boundary requires the owner to choose/approve:
-1. Activate OpenAI + Gemini live now or keep provider mocks.
-2. Server-side hosting target.
-3. Production credential provisioning method.
+Suite includes:
+- Core tests.
+- Storage tests.
+- Orchestrator tests.
+- HTTP tests.
+- v0.5 tests.
+- v0.6 Sandbox tests.
+- Readiness tests.
+- Live AI provider tests.
+- Cloud Sandbox persistence tests.
 
-Until that decision, Production activation stays blocked.
+## Secrets / credentials boundary
+
+Required for Phase A live AI Worker deployment:
+- `OPENAI_API_KEY`
+- `GEMINI_API_KEY`
+- `RUNTIME_BEARER_TOKEN`
+- GitHub Actions deploy secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
+
+Additional secrets only if Phase B sandbox persistence is enabled:
+- `GITHUB_SANDBOX_TOKEN`
+- `GOOGLE_OAUTH_CLIENT_ID`
+- `GOOGLE_OAUTH_CLIENT_SECRET`
+- `GOOGLE_OAUTH_REFRESH_TOKEN`
+
+No raw secret values were committed.
+
+The secure OpenAI API-key setup flow was opened in ChatGPT, but this checkpoint does not assume that the user completed key creation or installed it in Cloudflare.
+
+## Current Gate
+
+`CREDENTIAL_SETUP_AND_CLOUDFLARE_DEPLOY`
+
+Code and CI preparation are ready. The system is not yet allowed to claim:
+- Cloudflare Worker deployed;
+- real OpenAI/Gemini live smoke passed;
+- external Worker persistence enabled;
+- Production ready.
+
+## After credentials become available
+
+Execute in this order:
+1. Configure Cloudflare Worker Secrets for Phase A.
+2. Configure Cloudflare GitHub Actions deploy credentials.
+3. Run manual deploy workflow.
+4. Verify `/health`.
+5. Execute synthetic `@GPT`, `@Gemini`, and BOOM live turns.
+6. Record live-provider evidence.
+7. Only then consider enabling Phase B sandbox persistence.
+8. Production remains a separate later owner decision.
