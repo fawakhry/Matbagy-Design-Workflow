@@ -39,3 +39,5 @@ jobs:
         run: node runtime/readiness.test.mjs
       - name: Live AI Sandbox provider tests
         run: node runtime/live-providers.test.mjs
+      - name: Cloud Sandbox persistence tests
+        run: node runtime/cloud-sandbox-persistence.test.mjs
