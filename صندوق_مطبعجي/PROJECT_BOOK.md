@@ -142,4 +142,15 @@ Canonical case path:
 - بقيت فقط Redirects/روابط عالية المستوى في الأماكن العامة حتى يعرف أي Agent أين يجد المشروع الرسمي.
 - ممنوع إعادة نسخ تفاصيل مطبعجي إلى عقل فوخا أو TrendOS مستقبلًا.
 
+## 14) GitHub Separation Verification — 2026-09-12
+
+تم التحقق بعد التنظيف:
+
+- لا توجد Design Case IDs من نمط `DESIGN-2026-*` في الشجرة الحالية لـ`fawakhry/TrendOs`.
+- ملفات FOKHA الحالية الخاصة بـProjects/Knowledge/Rules/Decisions/Source Links/Negative Learning/Thinking Model/Sync أصبحت عالية المستوى فقط.
+- ملف Matbagy التفصيلي القديم الخاص بـAuto Final Selection غير موجود في الشجرة الحالية لـTrendOS.
+- `fawakhry/Matbagy` يظل مشروع Photo Sheets منفصلًا ولا يُستخدم كذاكرة Design Cases.
+- أي نتائج بحث قد تعرض ملفات أو نصوص مطبعجي من commits قديمة هي Git history وليست الحالة الحالية أو Source of Truth.
+- لا تتم إعادة كتابة Git history لمجرد إخفاء السجل القديم؛ المرجع التشغيلي هو الحالة الحالية للمصدر الرسمي للمشروع.
+
 ملاحظة Git: التنظيف يخص الحالة الحالية للفروع؛ الـcommit history القديم يظل جزءًا من تاريخ Git ولا يُعتبر Source of Truth حاليًا.
