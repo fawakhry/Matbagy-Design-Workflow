@@ -4,6 +4,7 @@ import { MemoryRateLimiter } from './rate-limit.mjs';
 import { runOrchestrationTurn } from './orchestrator-runtime.mjs';
 import { createLiveProvidersFromEnv } from './live-providers.mjs';
 import { validateSandboxConfig } from './sandbox-config.mjs';
+import { createSandboxPersistenceFromEnv, persistSandboxEvidence } from './cloud-sandbox-persistence.mjs';
 
 const MAX_BODY_BYTES = 1024 * 1024;
 const caseStore = new MemoryCaseStore();
@@ -28,14 +29,14 @@ export default {
         return json(200, {
           ok: readiness.ok,
           service: 'matbagy-runtime-worker',
-          version: '0.8',
+          version: '0.9',
           mode: 'SANDBOX',
           live_ai: readiness.ok,
           providers: {
             OPENAI: env.OPENAI_MODEL || 'gpt-5.6-terra',
             GEMINI: env.GEMINI_MODEL || 'gemini-3.8-flash',
           },
-          persistence: 'MEMORY_ONLY',
+          persistence: String(env.SANDBOX_PERSISTENCE_ENABLED || '').toLowerCase() === 'true' ? 'GITHUB_AND_DRIVE_SANDBOX' : 'MEMORY_ONLY',
           production_integrations: false,
           blockers: readiness.blockers,
           request_id: requestId,
@@ -77,10 +78,28 @@ export default {
         actor: { subject: auth.subject, roles: ['operator'], environment: 'SANDBOX' },
       });
 
+      let externalPersistence = { enabled: false, writes: [] };
+      try {
+        const persistence = createSandboxPersistenceFromEnv(env);
+        externalPersistence = await persistSandboxEvidence({
+          requestId,
+          persistence,
+          payload: buildEvidencePayload({ requestId, body, result }),
+        });
+      } catch (error) {
+        if (String(env.SANDBOX_PERSISTENCE_ENABLED || '').toLowerCase() === 'true') {
+          return json(502, {
+            ...errorBody('EXTERNAL_SANDBOX_PERSISTENCE_FAILED', error?.message || 'sandbox persistence failed', requestId),
+            provider_result: result,
+          }, requestId);
+        }
+      }
+
       return json(result.ok ? 200 : 422, {
         request_id: requestId,
-        runtime_version: '0.8',
-        persistence: 'MEMORY_ONLY',
+        runtime_version: '0.9',
+        persistence: externalPersistence.enabled ? 'GITHUB_AND_DRIVE_SANDBOX' : 'MEMORY_ONLY',
+        external_persistence: externalPersistence,
         ...result,
       }, requestId);
     } catch (error) {
@@ -107,7 +126,33 @@ export function validateEnv(env = {}) {
   });
   if (!sandbox.valid) blockers.push(...sandbox.errors);
 
-  return { ok: blockers.length === 0, blockers, sandbox: sandbox.normalized };
+  const persistenceEnabled = String(env.SANDBOX_PERSISTENCE_ENABLED || '').toLowerCase() === 'true';
+  if (persistenceEnabled) {
+    if (!env.GITHUB_SANDBOX_TOKEN) blockers.push('GITHUB_SANDBOX_TOKEN missing while persistence enabled');
+    if (!env.GOOGLE_OAUTH_CLIENT_ID) blockers.push('GOOGLE_OAUTH_CLIENT_ID missing while persistence enabled');
+    if (!env.GOOGLE_OAUTH_CLIENT_SECRET) blockers.push('GOOGLE_OAUTH_CLIENT_SECRET missing while persistence enabled');
+    if (!env.GOOGLE_OAUTH_REFRESH_TOKEN) blockers.push('GOOGLE_OAUTH_REFRESH_TOKEN missing while persistence enabled');
+  }
+
+  return { ok: blockers.length === 0, blockers, sandbox: sandbox.normalized, persistenceEnabled };
+}
+
+function buildEvidencePayload({ requestId, body, result }) {
+  return {
+    evidence_version: 'MATBAGY_LIVE_SANDBOX_V1',
+    request_id: requestId,
+    created_at: new Date().toISOString(),
+    environment: 'SANDBOX',
+    case_id: body?.caseData?.case_id || null,
+    user_request: body?.userRequest || '',
+    authority: result?.authority || 'ADVISORY_ONLY',
+    stage: result?.stage || null,
+    routing: result?.routing || null,
+    outputs: result?.outputs || [],
+    errors: result?.errors || [],
+    verification: result?.persistence?.verification || null,
+    production_integrations: false,
+  };
 }
 
 function authenticate(request, env) {
