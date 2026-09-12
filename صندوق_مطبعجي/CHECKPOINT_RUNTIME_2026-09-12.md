@@ -2,7 +2,7 @@
 
 ## Status
 
-`RUNTIME_BUILD_STARTED / LOCAL_TESTS_PASS / NO_PRODUCTION_INTEGRATION`
+`RUNTIME_V0.4 / LOCAL_TESTS_PASS / HTTP_TEST_BOUNDARY_READY / NO_PRODUCTION_INTEGRATION`
 
 ## Implemented
 
@@ -28,12 +28,36 @@ Location: `runtime/storage-adapters.mjs`
 - Audit trail simulation.
 - End-to-end local `persistCaseWithAdapters()` path.
 
+### Provider + Turn Runtime v0.3
+Locations:
+- `runtime/providers.mjs`
+- `runtime/orchestrator-runtime.mjs`
+
+- Mock ChatGPT/Gemini providers.
+- Provider response validation.
+- Truth labels preserved as AI opinions.
+- Full local orchestration turn.
+- Auto-Persist simulation after the turn.
+- No AI auto-close/final-approval authority.
+
+### HTTP Boundary v0.4
+Location: `runtime/http-server.mjs`
+
+- Local Node HTTP service.
+- `GET /health`.
+- `POST /v1/turn`.
+- Request IDs.
+- Idempotency replay.
+- 1 MB JSON limit.
+- Standard error envelope.
+- Refuses to start outside `TEST` / `LOCAL` mode.
+- No production integrations.
+
 ### Local Console
 Location: `runtime/console.html`
 
 - Accepts Case JSON and user request.
 - Displays validation, routing, persist plan and shared context.
-- No backend or external calls.
 
 ## Verification
 
@@ -42,27 +66,36 @@ Executed locally:
 ```text
 Matbagy Orchestrator Core v0.1 tests: PASS
 Matbagy Storage Adapter v0.2 tests: PASS
+Matbagy Orchestrator Runtime v0.3 tests: PASS
+Matbagy HTTP Runtime v0.4 tests: PASS
 ```
 
 Tests:
 - `runtime/orchestrator-core.test.mjs`
 - `runtime/storage-adapters.test.mjs`
+- `runtime/orchestrator-runtime.test.mjs`
+- `runtime/http-server.test.mjs`
 
 ## Safety Boundary
 
 Not implemented/activated:
-- OpenAI API.
-- Gemini API.
+- OpenAI API live adapter.
+- Gemini API live adapter.
 - Google Drive production adapter.
 - GitHub production write adapter inside Runtime.
-- Authentication.
-- Rate limiting.
+- Production authentication.
+- Production rate limiting.
 - Production deployment.
 
 No secrets or production customer data were added.
 
 ## Next Build Step
 
-`RUNTIME-03 — Provider + Storage Interfaces`
+`RUNTIME-05 — Auth/Test Adapters/Contract Hardening`
 
-Build provider-independent interfaces and mock providers first, then test orchestration rounds and audit behavior before introducing any live credentials or production connectors.
+1. Test auth boundary.
+2. Persistent audit interface.
+3. GitHub/Drive adapter contracts with mocks.
+4. Provider timeout/retry/circuit-breaker behavior.
+5. HTTP-to-adapter contract tests.
+6. Separate test environment before any production activation.
