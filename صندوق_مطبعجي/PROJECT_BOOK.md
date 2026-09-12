@@ -130,3 +130,16 @@ Canonical case path:
 - نقطة الاستكمال.
 
 أما التفاصيل التنفيذية، الحالات الفردية، الإصدارات، الملفات، والـEvidence فتظل داخل المجلدات المتخصصة للمشروع حتى لا يتحول الكتاب إلى نسخة ثانية من قاعدة البيانات.
+
+## 13) Project Separation Checkpoint — 2026-09-12
+
+تم تنفيذ فصل ذاكرة مطبعجي عن الذاكرة العامة على GitHub:
+
+- نُقلت الخلاصات المفيدة إلى هذا الكتاب بصيغة خطوط عريضة.
+- تم تحويل `TrendOs/FOKHA_BRAIN` إلى Portfolio/Index عام فقط بدون تفاصيل مطبعجي.
+- تم حذف الملف المخصص القديم `FOKHA_BRAIN/MEMORY/MATBAGY_AUTO_FINAL_SELECTION_2026-09-04.md` من الحالة الحالية لـTrendOS.
+- تم تنظيف النسخ التفصيلية من `PROJECTS / KNOWLEDGE / DECISIONS / RULES / NEGATIVE_LEARNING / SOURCE_LINKS / THINKING_MODEL / SYNC` داخل FOKHA_BRAIN.
+- بقيت فقط Redirects/روابط عالية المستوى في الأماكن العامة حتى يعرف أي Agent أين يجد المشروع الرسمي.
+- ممنوع إعادة نسخ تفاصيل مطبعجي إلى عقل فوخا أو TrendOS مستقبلًا.
+
+ملاحظة Git: التنظيف يخص الحالة الحالية للفروع؛ الـcommit history القديم يظل جزءًا من تاريخ Git ولا يُعتبر Source of Truth حاليًا.
