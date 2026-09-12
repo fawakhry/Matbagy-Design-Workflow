@@ -85,7 +85,7 @@ Canonical path:
 
 Current runtime status:
 
-`RUNTIME_V0.4 / LOCAL_TESTS_PASS / HTTP_TEST_BOUNDARY_READY / NO_PRODUCTION_INTEGRATION`
+`RUNTIME_V0.5 / LOCAL_TESTS_PASS / AUTH_AUDIT_ADAPTER_CONTRACTS_READY / NO_PRODUCTION_INTEGRATION`
 
 الموجود حاليًا داخل `runtime/`:
 
@@ -93,10 +93,9 @@ Current runtime status:
 - Storage Adapter mocks v0.2.
 - ChatGPT/Gemini mock provider contracts + orchestration turn v0.3.
 - Local HTTP boundary v0.4.
+- Auth/Audit/Adapter contracts/Provider resilience/Rate limit hardening v0.5.
 - Local console.
-- Automated tests لكل طبقة.
-
-الاختبارات المحلية المسجلة كلها PASS.
+- Automated regression + contract tests.
 
 التفاصيل التقنية الكاملة في:
 `صندوق_مطبعجي/CHECKPOINT_RUNTIME_2026-09-12.md`
@@ -109,22 +108,25 @@ Current runtime status:
 - لا Gemini API حي.
 - لا Google Drive production adapter داخل Runtime.
 - لا GitHub production write adapter داخل Runtime.
-- لا Production Auth/Rate Limiting.
+- لا Production credentials أو Identity Provider.
+- لا Production distributed rate limiting.
 - لا Production deployment.
+
+Auth الحالي وToken الحالي للاختبار المحلي فقط، وليسوا Production security.
 
 أي ربط حقيقي يجب أن يكون Server-side، بدون secrets في Frontend أو GitHub العام، وبعد Test Environment وRuntime Verification.
 
 ## 11) المرحلة التالية
 
-`RUNTIME-05 — Auth/Test Adapters/Contract Hardening`
+`RUNTIME-06 — Sandbox Integration Harness`
 
 الخطوط العريضة:
-- Test auth boundary.
-- Persistent audit interface.
-- GitHub/Drive adapter contracts مع mocks.
-- Provider timeout/retry/circuit-breaker behavior.
-- HTTP-to-adapter contract tests.
-- بعد ذلك Test Environment منفصلة قبل أي Production activation.
+- بيئة Sandbox منفصلة تفشل مغلقًا إذا استهدفت Production بالخطأ.
+- GitHub sandbox adapter لمسار/branch اختبار فقط.
+- Drive sandbox adapter داخل test folder مستقل فقط.
+- End-to-end persistence verification في الـsandbox.
+- Cleanup / rollback موثق.
+- أي تفعيل Production أو live AI credentials يظل قرارًا منفصلًا بعد نجاح الـsandbox.
 
 ## 12) Startup Protocol لأي شات جديد
 
@@ -161,9 +163,10 @@ Current runtime status:
 
 - Project separation: مكتمل.
 - Memory integrity: مكتمل كأساس.
-- Runtime build: وصل إلى v0.4.
-- Local tests: PASS.
+- Runtime build: وصل إلى v0.5.
+- Auth/Audit/Adapter contract hardening: مكتمل محليًا.
+- Regression + contract tests: PASS.
 - Production integrations: غير مفعلة.
-- Next task: `RUNTIME-05`.
+- Next task: `RUNTIME-06`.
 
 لا تبدأ من MVP القديم في root إلا إذا كانت المهمة تخصه صراحة؛ البناء التقني الجديد يبدأ من `runtime/`.
