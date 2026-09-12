@@ -1,4 +1,4 @@
-# Matbagy Runtime v0.2
+# Matbagy Runtime v0.3
 
 أول Runtime قابل للاختبار لصندوق مطبعجي، بدون أي اتصال إنتاجي خارجي.
 
@@ -27,10 +27,20 @@
 - حساب LINKED / PENDING_UPLOAD / MISSING.
 - `SAFE_TO_DELETE_CHAT` لا يصبح true إلا بعد اكتمال binding في سيناريو الاختبار.
 
+### Provider + Turn Runtime v0.3
+- Provider contracts منفصلة عن الـCore.
+- `MockChatGPTProvider` و`MockGeminiProvider` بدون أي API خارجي.
+- Validation لردود الـProviders وTruth Labels.
+- `runOrchestrationTurn()` يشغل Turn كامل حسب GPT / Gemini / BOOM.
+- Shared Context يمرر أقل معلومات لازمة لكل Provider.
+- Provider outputs تبقى `CHATGPT_OPINION` / `GEMINI_OPINION` ولا تتحول إلى Customer Fact.
+- Auto-Persist بالمحاكاة يعمل بعد الـTurn مع Audit entry.
+- Case phase لا تتحول تلقائيًا إلى `FINAL_APPROVED` أو `CLOSED`.
+
 ## ما لا يعمل بعد
 
-- لا OpenAI API.
-- لا Gemini API.
+- لا OpenAI API حي.
+- لا Gemini API حي.
 - لا Google Drive production read/write.
 - لا GitHub production write من داخل Runtime.
 - لا secrets أو credentials.
@@ -42,6 +52,7 @@
 ```bash
 node runtime/orchestrator-core.test.mjs
 node runtime/storage-adapters.test.mjs
+node runtime/orchestrator-runtime.test.mjs
 ```
 
 المتوقع:
@@ -49,6 +60,7 @@ node runtime/storage-adapters.test.mjs
 ```text
 Matbagy Orchestrator Core v0.1 tests: PASS
 Matbagy Storage Adapter v0.2 tests: PASS
+Matbagy Orchestrator Runtime v0.3 tests: PASS
 ```
 
 ## Console
@@ -57,10 +69,12 @@ Matbagy Storage Adapter v0.2 tests: PASS
 
 ## المرحلة التالية
 
-1. تعريف Production adapter interfaces بدون أسرار.
-2. Server-side AI provider adapter مع Mock provider أولًا.
-3. Auth + audit persistence + rate limits.
-4. GitHub/Drive adapters في بيئة اختبار منفصلة.
+`RUNTIME-04 — Server Boundary + Mock HTTP API`
+
+1. بناء HTTP contract محلي/اختباري بدون secrets.
+2. فصل auth/audit/request-id/error model عن منطق الـCore.
+3. إضافة idempotency وrequest tracing.
+4. بعدها فقط إنشاء adapters حقيقية في بيئة اختبار منفصلة.
 5. Runtime verification قبل أي Production activation.
 
 ## قاعدة الأمان
