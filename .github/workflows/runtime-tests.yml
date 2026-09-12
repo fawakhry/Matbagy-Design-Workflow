@@ -1,0 +1,39 @@
+name: Matbagy Runtime Tests
+
+on:
+  push:
+    branches:
+      - agent/initial-mvp
+      - sandbox/runtime-v06
+  pull_request:
+    branches:
+      - agent/initial-mvp
+
+permissions:
+  contents: read
+
+jobs:
+  runtime-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Core tests
+        run: node runtime/orchestrator-core.test.mjs
+      - name: Storage tests
+        run: node runtime/storage-adapters.test.mjs
+      - name: Orchestrator tests
+        run: node runtime/orchestrator-runtime.test.mjs
+      - name: HTTP tests
+        run: node runtime/http-server.test.mjs
+      - name: Runtime v0.5 tests
+        run: node runtime/runtime-v05.test.mjs
+      - name: Sandbox v0.6 tests
+        run: node runtime/runtime-v06.test.mjs
+      - name: Readiness gate tests
+        run: node runtime/readiness.test.mjs
