@@ -8,10 +8,12 @@
     "MATBAGY_RUNTIME_MODE": "SANDBOX",
     "OPENAI_MODEL": "gpt-5.6-terra",
     "GEMINI_MODEL": "gemini-3.8-flash",
+    "GITHUB_REPOSITORY": "fawakhry/Matbagy-Design-Workflow",
     "GITHUB_SANDBOX_BRANCH": "sandbox/runtime-v06",
     "GITHUB_SANDBOX_PREFIX": "runtime-sandbox/",
     "DRIVE_SANDBOX_FOLDER_ID": "1pTM4Xw98qnd1XoPKpBDVel21CXCQpZoF",
-    "CANONICAL_DRIVE_ROOT_ID": "1kP_JAO-ZOJltX9FCkAsylxYAfRar-RQV"
+    "CANONICAL_DRIVE_ROOT_ID": "1kP_JAO-ZOJltX9FCkAsylxYAfRar-RQV",
+    "SANDBOX_PERSISTENCE_ENABLED": "false"
   },
   "secrets": {
     "required": [
