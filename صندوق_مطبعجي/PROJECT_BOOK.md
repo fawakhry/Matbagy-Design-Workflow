@@ -1,6 +1,6 @@
 # كتيب مشروع صندوق مطبعجي — Project Continuation Book
 
-> هذا هو المرجع المختصر الرسمي لاستكمال مشروع صندوق مطبعجي من أي شات جديد. لا تبدأ Discovery من الصفر.
+> المرجع المختصر الرسمي لاستكمال مشروع صندوق مطبعجي من أي شات جديد. لا تبدأ Discovery من الصفر.
 
 ## 1) المصدر الرسمي
 
@@ -9,35 +9,35 @@
 - Entry: `صندوق_مطبعجي.md`
 - Book: `صندوق_مطبعجي/PROJECT_BOOK.md`
 - Operating instructions: `صندوق_مطبعجي/اقرأني_أولاً.md`
-- Detailed cases: `صندوق_مطبعجي/DESIGN_CASES/`
-- Watch/index: `صندوق_مطبعجي/WATCH/`
-- Knowledge: `صندوق_مطبعجي/KNOWLEDGE/`
-- Schemas/contracts: `صندوق_مطبعجي/SCHEMA/`
+- Detailed Cases: `صندوق_مطبعجي/CASES/`
+- Rooms/Watch/Knowledge/Schemas: داخل `صندوق_مطبعجي/`
+- Runtime: `runtime/`
 
 `fawakhry/Matbagy` و`fawakhry/TrendOs/FOKHA_BRAIN` ليسا ذاكرة المشروع.
 
 ## 2) هدف المشروع
 
-صندوق مطبعجي هو ذاكرة مستقلة لشغل التصميمات تحفظ الحالات والنسخ والأصول والقرارات والتعلم بحيث يمكن استكمال العمل من آخر حالة موثقة بدل البدء من الصفر.
+صندوق مطبعجي هو ذاكرة مستقلة + Runtime تدريجي لشغل التصميمات، بحيث نحفظ Cases / Versions / Assets / Decisions / Learning ونستكمل العمل من آخر حالة موثقة بدل البدء من الصفر.
 
 المسار العام:
 
-`Chat -> Case -> Versions -> Assets -> Decisions -> Lessons -> Knowledge`
+`Chat -> Case -> Versions -> Assets -> Decisions -> Lessons -> Knowledge -> Runtime`
 
-## 3) طريقة الحفظ الحالية
+## 3) سياسة الذاكرة
 
-- النظام يعمل بـ`AUTO_PERSIST`.
+- `AUTO_PERSIST` هو الوضع الرسمي.
 - حفظ الذاكرة لا ينتظر عبارة اعتماد يدوية.
 - الحفظ لا يساوي اعتماد التصميم النهائي ولا يساوي أمر تنفيذ.
-- النسخ المرفوضة والفاشلة تُحفظ كـNegative Learning ولا تُستخدم كقالب إيجابي.
-- كل Case/Asset/Version/Knowledge يستخدم ID ثابتًا قدر الإمكان.
+- النسخ المرفوضة والفاشلة تُحفظ كـNegative Learning.
+- IDs ثابتة قدر الإمكان: Case / Version / Asset / Knowledge.
+- AI authority = `ADVISORY_ONLY`.
 
 ## 4) مصادر الحقيقة
 
-- GitHub: حالة الـCases، العقود، القرارات، الـKnowledge والـmetadata.
+- GitHub: Case state / contracts / decisions / metadata / knowledge.
 - Google Drive: الصور والأصول الفعلية.
-- Drive File ID أقوى من اسم الملف أو المسار.
-- الحقائق التشغيلية الحية مثل Order/Payment/Inventory/Delivery ليست من ذاكرة التصميم؛ مصدرها نظام التشغيل المختص عند الربط مستقبلًا.
+- Drive File ID أقوى من الاسم أو المسار.
+- الحقائق التشغيلية الحية مثل Order/Payment/Inventory/Delivery تأتي مستقبلًا من نظام التشغيل المختص، وليس من AI memory.
 
 ## 5) Google Drive
 
@@ -45,112 +45,125 @@ Project Root:
 - `مشروع مطبعجي - Matbagy Project`
 - Folder ID: `1kP_JAO-ZOJltX9FCkAsylxYAfRar-RQV`
 
-Canonical case path:
+Canonical path:
 `01_Design_Cases/YYYY/<CASE_ID>/`
 
-قاعدة الحفظ:
-- الصور الحقيقية في Drive.
-- GitHub يحتفظ بالـmetadata والـIDs والروابط فقط.
-- لا توضع صور العملاء أو الأسرار في GitHub العام.
+القاعدة:
+- صور العملاء الحقيقية تبقى في Drive.
+- GitHub يحتفظ metadata + IDs + links فقط.
+- لا أسرار أو صور عملاء خاصة في Repository عام.
 
 ## 6) قواعد التصميم والإنتاج — خطوط عريضة
 
 - الحفاظ على ملامح الصور الأصلية وعدم تغيير الوجه أو إضافة فلاتر بدون طلب صريح.
 - تعديل المطلوب فقط وعدم تغيير بقية التصميم تلقائيًا.
-- المقاس المطلوب، الخلفية البيضاء، والاستروك المغلق عند طلبهم قيود إنتاج وليست اقتراحات جمالية.
-- `استخراج التصميم للطباعة` يعني Artwork نظيفًا وليس Screenshot أو واجهة.
-- القرارات والتعلم تُبنى على Evidence موثق، وليس على رأي AI وحده.
+- المقاس، الخلفية البيضاء، والاستروك المغلق عند طلبهم قيود إنتاج.
+- `استخراج التصميم للطباعة` يعني Artwork نظيفًا وليس Screenshot/واجهة.
+- القرار والتعلم يبنيان على Evidence موثق، وليس رأي AI وحده.
 
-## 7) AI / Runtime
+## 7) الفصل بين المشاريع
 
-- AI authority: `ADVISORY_ONLY`.
-- المستخدم هو صاحب القرار النهائي.
-- الهدف المستقبلي: Orchestrator يربط ChatGPT/Gemini/GitHub/Drive.
-- الوضع الحالي: GitHub Rooms + Manual Bridge؛ لا يوجد Orchestrator إنتاجي كامل حتى الآن.
-- الواجهة الموجودة في root هي MVP تجريبي مستقل، وليست Runtime لذاكرة المشروع.
+قرار ثابت منذ 2026-09-12:
 
-## 8) الفصل عن باقي المشاريع
-
-قرار تنظيمي ثابت من 2026-09-12:
-
-- كل مشروع يحتفظ بذاكرته داخل Repository/Branch رسمي خاص به.
-- FOKHA_BRAIN أو أي Portfolio عام يحتفظ فقط باسم المشروع، حالته العامة، ورابط المصدر الرسمي.
-- لا تحفظ قرارات مطبعجي التفصيلية أو قواعده أو Knowledge الخاصة به داخل TrendOS/FOKHA_BRAIN.
+- كل مشروع يحتفظ بذاكرته داخل Repository/Branch الرسمي الخاص به.
+- FOKHA_BRAIN يحتفظ فقط بفهرس وروابط عالية المستوى.
+- لا تحفظ تفاصيل مطبعجي داخل TrendOS/FOKHA_BRAIN.
 - لا تكرر نفس الحقيقة الحية في أكثر من مشروع.
-- عند وجود تعارض، المصدر الرسمي للمشروع وأحدث Evidence موثق هما المرجع.
+- Git history القديم قد يحتوي إشارات تاريخية، لكنه ليس Source of Truth حاليًا.
 
-## 9) معلومات جُمعت من أماكن أخرى ثم تم اعتمادها هنا
+## 8) الحالة العامة للذاكرة
 
-تم تجميع الخلاصة المفيدة التي كانت موزعة سابقًا في TrendOS/FOKHA_BRAIN، وأهمها:
+- Integrity pass تم تنفيذه.
+- Drive duplicate/path cleanup الأساسي تم مع الحفاظ على IDs الصحيحة.
+- Watch وKnowledge registry تم تحديثهما.
+- التعليمات القديمة المتعارضة مع Auto-Persist تم تصحيحها.
+- تفاصيل الـCases تبقى في ملفاتها المتخصصة، وليس في هذا الكتاب.
 
-- فصل ذاكرة كل مشروع عن المشاريع الأخرى.
-- استخدام Repository + Branch + Entry Point موثق بدل التخمين من الاسم.
-- الحفاظ على IDs الثابتة وروابط المصدر.
-- الفصل بين Prepared / Tested / Deployed / Verified.
-- تنفيذ تغييرات صغيرة قابلة للرجوع بدل إعادة البناء الكبير.
-- تحويل الشغل المكتمل إلى Evidence ثم Lessons ثم Knowledge Candidates.
-- عدم تحويل رأي AI إلى قاعدة عامة بدون Evidence كافٍ.
-- الحفاظ على الفشل والرفض للتعلم السلبي.
-- عدم وضع secrets أو أصول العملاء الخاصة في GitHub العام.
+## 9) Runtime — الحالة الحالية
 
-هذه المبادئ أصبحت محفوظة هنا كسياق المشروع، وأي تفاصيل تخص مشاريع أخرى تبقى في مصادرها هي.
+بدأ البناء الفعلي للـOrchestrator، ولم يعد المشروع Architecture فقط.
 
-## 10) الحالة العامة الحالية
+Current runtime status:
 
-- الذاكرة الرسمية موجودة على `agent/initial-mvp`.
-- Auto-Persist فعال كسياسة المشروع.
-- Drive cleanup الأساسي لحالات duplicate/path drift تم تنفيذه في 2026-09-12 مع الحفاظ على IDs الصحيحة.
-- WATCH وKnowledge registry تم تحديثهما في نفس جولة النزاهة.
-- تفاصيل الـCases الحالية موجودة داخل ملفات الـCase نفسها، وليس داخل هذا الكتاب المختصر.
+`RUNTIME_V0.4 / LOCAL_TESTS_PASS / HTTP_TEST_BOUNDARY_READY / NO_PRODUCTION_INTEGRATION`
 
-## 11) Startup Protocol لأي شات جديد
+الموجود حاليًا داخل `runtime/`:
+
+- Orchestrator Core v0.1.
+- Storage Adapter mocks v0.2.
+- ChatGPT/Gemini mock provider contracts + orchestration turn v0.3.
+- Local HTTP boundary v0.4.
+- Local console.
+- Automated tests لكل طبقة.
+
+الاختبارات المحلية المسجلة كلها PASS.
+
+التفاصيل التقنية الكاملة في:
+`صندوق_مطبعجي/CHECKPOINT_RUNTIME_2026-09-12.md`
+
+## 10) Runtime Safety Boundary
+
+لم يتم تفعيل أي Production integration حتى الآن:
+
+- لا OpenAI API حي.
+- لا Gemini API حي.
+- لا Google Drive production adapter داخل Runtime.
+- لا GitHub production write adapter داخل Runtime.
+- لا Production Auth/Rate Limiting.
+- لا Production deployment.
+
+أي ربط حقيقي يجب أن يكون Server-side، بدون secrets في Frontend أو GitHub العام، وبعد Test Environment وRuntime Verification.
+
+## 11) المرحلة التالية
+
+`RUNTIME-05 — Auth/Test Adapters/Contract Hardening`
+
+الخطوط العريضة:
+- Test auth boundary.
+- Persistent audit interface.
+- GitHub/Drive adapter contracts مع mocks.
+- Provider timeout/retry/circuit-breaker behavior.
+- HTTP-to-adapter contract tests.
+- بعد ذلك Test Environment منفصلة قبل أي Production activation.
+
+## 12) Startup Protocol لأي شات جديد
 
 عند قول المستخدم:
 `ادخل جيت هب صندوق مطبعجي`
 أو
 `كمل مشروع صندوق مطبعجي`
 
-نفذ بالترتيب:
+نفذ:
 
 1. اقرأ `صندوق_مطبعجي.md`.
 2. اقرأ `صندوق_مطبعجي/PROJECT_BOOK.md`.
-3. افحص أحدث commit على `agent/initial-mvp` بعد آخر checkpoint معروف.
-4. إذا كانت المهمة تخص Case بعينه، اقرأ Case + Room + Drive metadata فقط.
-5. لا تعيد اكتشاف المشروع من الصفر.
-6. بعد أي تقدم جوهري، حدّث هذا الكتاب بخلاصة عالية المستوى فقط؛ التفاصيل تبقى في ملفاتها المتخصصة.
+3. اقرأ أحدث Runtime checkpoint إذا المهمة تقنية.
+4. افحص commits بعد آخر checkpoint فقط.
+5. إذا المهمة تخص Case بعينه، اقرأ Case + Room + Drive metadata فقط.
+6. لا تعيد اكتشاف المشروع من الصفر.
+7. بعد تقدم جوهري، حدّث هذا الكتاب بخلاصة عالية المستوى فقط.
 
-## 12) سياسة الكتاب
+## 13) سياسة الكتاب
 
-هذا الكتاب يحتفظ **بالخطوط العريضة فقط**:
+هذا الكتاب يحتفظ بالخطوط العريضة فقط:
 - هوية المشروع.
 - المصدر الرسمي.
 - طريقة التشغيل.
 - القواعد العامة.
-- آخر حالة موثقة.
-- نقطة الاستكمال.
+- حالة الذاكرة والـRuntime.
+- آخر نقطة استكمال.
 
-أما التفاصيل التنفيذية، الحالات الفردية، الإصدارات، الملفات، والـEvidence فتظل داخل المجلدات المتخصصة للمشروع حتى لا يتحول الكتاب إلى نسخة ثانية من قاعدة البيانات.
+التفاصيل التنفيذية تبقى في Cases / Rooms / Schema / Runtime / Checkpoints.
 
-## 13) Project Separation Checkpoint — 2026-09-12
+## 14) Latest Continuation Point — 2026-09-12
 
-تم تنفيذ فصل ذاكرة مطبعجي عن الذاكرة العامة على GitHub:
+آخر نقطة استكمال موثقة:
 
-- نُقلت الخلاصات المفيدة إلى هذا الكتاب بصيغة خطوط عريضة.
-- تم تحويل `TrendOs/FOKHA_BRAIN` إلى Portfolio/Index عام فقط بدون تفاصيل مطبعجي.
-- تم حذف الملف المخصص القديم `FOKHA_BRAIN/MEMORY/MATBAGY_AUTO_FINAL_SELECTION_2026-09-04.md` من الحالة الحالية لـTrendOS.
-- تم تنظيف النسخ التفصيلية من `PROJECTS / KNOWLEDGE / DECISIONS / RULES / NEGATIVE_LEARNING / SOURCE_LINKS / THINKING_MODEL / SYNC` داخل FOKHA_BRAIN.
-- بقيت فقط Redirects/روابط عالية المستوى في الأماكن العامة حتى يعرف أي Agent أين يجد المشروع الرسمي.
-- ممنوع إعادة نسخ تفاصيل مطبعجي إلى عقل فوخا أو TrendOS مستقبلًا.
+- Project separation: مكتمل.
+- Memory integrity: مكتمل كأساس.
+- Runtime build: وصل إلى v0.4.
+- Local tests: PASS.
+- Production integrations: غير مفعلة.
+- Next task: `RUNTIME-05`.
 
-## 14) GitHub Separation Verification — 2026-09-12
-
-تم التحقق بعد التنظيف:
-
-- لا توجد Design Case IDs من نمط `DESIGN-2026-*` في الشجرة الحالية لـ`fawakhry/TrendOs`.
-- ملفات FOKHA الحالية الخاصة بـProjects/Knowledge/Rules/Decisions/Source Links/Negative Learning/Thinking Model/Sync أصبحت عالية المستوى فقط.
-- ملف Matbagy التفصيلي القديم الخاص بـAuto Final Selection غير موجود في الشجرة الحالية لـTrendOS.
-- `fawakhry/Matbagy` يظل مشروع Photo Sheets منفصلًا ولا يُستخدم كذاكرة Design Cases.
-- أي نتائج بحث قد تعرض ملفات أو نصوص مطبعجي من commits قديمة هي Git history وليست الحالة الحالية أو Source of Truth.
-- لا تتم إعادة كتابة Git history لمجرد إخفاء السجل القديم؛ المرجع التشغيلي هو الحالة الحالية للمصدر الرسمي للمشروع.
-
-ملاحظة Git: التنظيف يخص الحالة الحالية للفروع؛ الـcommit history القديم يظل جزءًا من تاريخ Git ولا يُعتبر Source of Truth حاليًا.
+لا تبدأ من MVP القديم في root إلا إذا كانت المهمة تخصه صراحة؛ البناء التقني الجديد يبدأ من `runtime/`.
