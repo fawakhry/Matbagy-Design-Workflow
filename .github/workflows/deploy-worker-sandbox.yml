@@ -13,10 +13,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+
       - name: Run Runtime test suite
         run: |
           node runtime/orchestrator-core.test.mjs
@@ -28,15 +30,35 @@ jobs:
           node runtime/readiness.test.mjs
           node runtime/live-providers.test.mjs
           node runtime/cloud-sandbox-persistence.test.mjs
-      - name: Validate Cloudflare deploy credentials
+
+      - name: Validate deployment and Worker secrets
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          RUNTIME_BEARER_TOKEN: ${{ secrets.RUNTIME_BEARER_TOKEN }}
         run: |
           test -n "$CLOUDFLARE_API_TOKEN" || (echo "CLOUDFLARE_API_TOKEN is required" && exit 1)
           test -n "$CLOUDFLARE_ACCOUNT_ID" || (echo "CLOUDFLARE_ACCOUNT_ID is required" && exit 1)
+          test -n "$OPENAI_API_KEY" || (echo "OPENAI_API_KEY is required" && exit 1)
+          test -n "$GEMINI_API_KEY" || (echo "GEMINI_API_KEY is required" && exit 1)
+          test -n "$RUNTIME_BEARER_TOKEN" || (echo "RUNTIME_BEARER_TOKEN is required" && exit 1)
+
+      - name: Build temporary Worker secrets file
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          RUNTIME_BEARER_TOKEN: ${{ secrets.RUNTIME_BEARER_TOKEN }}
+        run: |
+          node -e "const fs=require('fs'); const p=process.env.RUNNER_TEMP+'/matbagy-worker-secrets.json'; fs.writeFileSync(p, JSON.stringify({OPENAI_API_KEY:process.env.OPENAI_API_KEY,GEMINI_API_KEY:process.env.GEMINI_API_KEY,RUNTIME_BEARER_TOKEN:process.env.RUNTIME_BEARER_TOKEN})); fs.chmodSync(p,0o600);"
+
       - name: Deploy Cloudflare Worker Sandbox
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: npx --yes wrangler@latest deploy --config runtime/wrangler.jsonc
+        run: npx --yes wrangler@latest deploy --config runtime/wrangler.jsonc --secrets-file "$RUNNER_TEMP/matbagy-worker-secrets.json"
+
+      - name: Remove temporary Worker secrets file
+        if: always()
+        run: rm -f "$RUNNER_TEMP/matbagy-worker-secrets.json"
