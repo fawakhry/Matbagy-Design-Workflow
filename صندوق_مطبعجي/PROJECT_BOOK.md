@@ -8,9 +8,7 @@
 - Branch: `agent/initial-mvp`
 - Entry: `صندوق_مطبعجي.md`
 - Book: `صندوق_مطبعجي/PROJECT_BOOK.md`
-- Operating instructions: `صندوق_مطبعجي/اقرأني_أولاً.md`
 - Detailed Cases: `صندوق_مطبعجي/CASES/`
-- Rooms/Watch/Knowledge/Schemas: داخل `صندوق_مطبعجي/`
 - Runtime: `runtime/`
 
 `fawakhry/Matbagy` و`fawakhry/TrendOs/FOKHA_BRAIN` ليسا ذاكرة المشروع.
@@ -19,154 +17,141 @@
 
 صندوق مطبعجي هو ذاكرة مستقلة + Runtime تدريجي لشغل التصميمات، بحيث نحفظ Cases / Versions / Assets / Decisions / Learning ونستكمل العمل من آخر حالة موثقة بدل البدء من الصفر.
 
-المسار العام:
-
 `Chat -> Case -> Versions -> Assets -> Decisions -> Lessons -> Knowledge -> Runtime`
 
 ## 3) سياسة الذاكرة
 
 - `AUTO_PERSIST` هو الوضع الرسمي.
-- حفظ الذاكرة لا ينتظر عبارة اعتماد يدوية.
-- الحفظ لا يساوي اعتماد التصميم النهائي ولا يساوي أمر تنفيذ.
-- النسخ المرفوضة والفاشلة تُحفظ كـNegative Learning.
-- IDs ثابتة قدر الإمكان: Case / Version / Asset / Knowledge.
+- الحفظ لا ينتظر عبارة اعتماد يدوية.
+- الحفظ لا يساوي اعتماد نهائي ولا أمر تنفيذ.
+- الفشل والرفض يُحتفظ بهما كـNegative Learning.
 - AI authority = `ADVISORY_ONLY`.
 
 ## 4) مصادر الحقيقة
 
-- GitHub: Case state / contracts / decisions / metadata / knowledge.
+- GitHub: Case state / contracts / metadata / knowledge.
 - Google Drive: الصور والأصول الفعلية.
 - Drive File ID أقوى من الاسم أو المسار.
-- الحقائق التشغيلية الحية مثل Order/Payment/Inventory/Delivery تأتي مستقبلًا من نظام التشغيل المختص، وليس من AI memory.
+- حقائق Order/Payment/Inventory/Delivery تأتي من النظام التشغيلي المختص عند الربط مستقبلًا.
 
 ## 5) Google Drive
 
-Project Root:
-- `مشروع مطبعجي - Matbagy Project`
-- Folder ID: `1kP_JAO-ZOJltX9FCkAsylxYAfRar-RQV`
+Project Root ID:
+`1kP_JAO-ZOJltX9FCkAsylxYAfRar-RQV`
 
-Canonical path:
+Canonical Case path:
 `01_Design_Cases/YYYY/<CASE_ID>/`
 
-القاعدة:
-- صور العملاء الحقيقية تبقى في Drive.
-- GitHub يحتفظ metadata + IDs + links فقط.
-- لا أسرار أو صور عملاء خاصة في Repository عام.
+Sandbox Runtime folder:
+- `99_Runtime_Sandbox`
+- ID: `1pTM4Xw98qnd1XoPKpBDVel21CXCQpZoF`
+
+صور العملاء الحقيقية تبقى في Drive، وGitHub العام يحتفظ بالـmetadata والـIDs والروابط فقط.
 
 ## 6) قواعد التصميم والإنتاج — خطوط عريضة
 
-- الحفاظ على ملامح الصور الأصلية وعدم تغيير الوجه أو إضافة فلاتر بدون طلب صريح.
-- تعديل المطلوب فقط وعدم تغيير بقية التصميم تلقائيًا.
-- المقاس، الخلفية البيضاء، والاستروك المغلق عند طلبهم قيود إنتاج.
-- `استخراج التصميم للطباعة` يعني Artwork نظيفًا وليس Screenshot/واجهة.
-- القرار والتعلم يبنيان على Evidence موثق، وليس رأي AI وحده.
+- الحفاظ على الملامح وعدم إضافة فلاتر أو تغيير الوجه بدون طلب صريح.
+- تعديل المطلوب فقط.
+- المقاس والخلفية والاستروك عند طلبهم قيود إنتاج.
+- `استخراج التصميم للطباعة` يعني Artwork نظيفًا.
+- التعلم والقرارات يعتمدون على Evidence موثق.
 
 ## 7) الفصل بين المشاريع
 
-قرار ثابت منذ 2026-09-12:
+- كل مشروع يحتفظ بتفاصيله داخل Repository/Branch الرسمي الخاص به.
+- FOKHA_BRAIN يحتفظ فقط بفهرس وروابط عامة.
+- لا تُكرر حقيقة حية في أكثر من مشروع.
+- Git history القديم ليس Source of Truth حاليًا.
 
-- كل مشروع يحتفظ بذاكرته داخل Repository/Branch الرسمي الخاص به.
-- FOKHA_BRAIN يحتفظ فقط بفهرس وروابط عالية المستوى.
-- لا تحفظ تفاصيل مطبعجي داخل TrendOS/FOKHA_BRAIN.
-- لا تكرر نفس الحقيقة الحية في أكثر من مشروع.
-- Git history القديم قد يحتوي إشارات تاريخية، لكنه ليس Source of Truth حاليًا.
+## 8) حالة الذاكرة
 
-## 8) الحالة العامة للذاكرة
-
-- Integrity pass تم تنفيذه.
-- Drive duplicate/path cleanup الأساسي تم مع الحفاظ على IDs الصحيحة.
-- Watch وKnowledge registry تم تحديثهما.
-- التعليمات القديمة المتعارضة مع Auto-Persist تم تصحيحها.
-- تفاصيل الـCases تبقى في ملفاتها المتخصصة، وليس في هذا الكتاب.
+- Integrity pass: مكتمل كأساس.
+- Drive duplicate/path cleanup الأساسي: مكتمل.
+- Watch/Knowledge registry: تم تحديثهما.
+- التعليمات المتعارضة مع Auto-Persist: تم تصحيحها.
 
 ## 9) Runtime — الحالة الحالية
 
-بدأ البناء الفعلي للـOrchestrator، ولم يعد المشروع Architecture فقط.
+Current status:
 
-Current runtime status:
+`RUNTIME_V0.7 / SANDBOX_LIVE_SMOKE_PASS / CI_INITIAL_RUN_SUCCESS / PRODUCTION_DECISION_GATE`
 
-`RUNTIME_V0.5 / LOCAL_TESTS_PASS / AUTH_AUDIT_ADAPTER_CONTRACTS_READY / NO_PRODUCTION_INTEGRATION`
+الطبقات المبنية:
+- v0.1 Orchestrator Core.
+- v0.2 Storage mocks.
+- v0.3 Provider + Turn Runtime.
+- v0.4 Local HTTP boundary.
+- v0.5 Auth/Audit/Adapter contracts/Provider resilience/Rate limit.
+- v0.6 Sandbox Integration Harness.
+- v0.7 Readiness Gate + GitHub Actions CI.
 
-الموجود حاليًا داخل `runtime/`:
+## 10) Sandbox verification
 
-- Orchestrator Core v0.1.
-- Storage Adapter mocks v0.2.
-- ChatGPT/Gemini mock provider contracts + orchestration turn v0.3.
-- Local HTTP boundary v0.4.
-- Auth/Audit/Adapter contracts/Provider resilience/Rate limit hardening v0.5.
-- Local console.
-- Automated regression + contract tests.
+GitHub sandbox:
+- Branch: `sandbox/runtime-v06`.
+- Allowed write prefix: `runtime-sandbox/`.
+- Live create/read/delete smoke: PASS.
 
-التفاصيل التقنية الكاملة في:
-`صندوق_مطبعجي/CHECKPOINT_RUNTIME_2026-09-12.md`
+Drive sandbox:
+- Folder: `99_Runtime_Sandbox`.
+- Live create/read/delete smoke: PASS.
 
-## 10) Runtime Safety Boundary
+Canonical Cases/production targets لم تُستخدم في اختبارات الـsandbox.
 
-لم يتم تفعيل أي Production integration حتى الآن:
+التفاصيل التقنية في:
+- `runtime/SANDBOX_TARGETS.md`
+- `صندوق_مطبعجي/CHECKPOINT_RUNTIME_2026-09-12.md`
 
-- لا OpenAI API حي.
-- لا Gemini API حي.
-- لا Google Drive production adapter داخل Runtime.
-- لا GitHub production write adapter داخل Runtime.
-- لا Production credentials أو Identity Provider.
-- لا Production distributed rate limiting.
-- لا Production deployment.
+## 11) CI / Verification
 
-Auth الحالي وToken الحالي للاختبار المحلي فقط، وليسوا Production security.
+- Workflow: `Matbagy Runtime Tests`.
+- Node 22.
+- بدون Secrets.
+- أول تشغيل مسجل: SUCCESS.
+- Local sandbox/readiness tests: PASS.
 
-أي ربط حقيقي يجب أن يكون Server-side، بدون secrets في Frontend أو GitHub العام، وبعد Test Environment وRuntime Verification.
+## 12) Runtime Safety Boundary
 
-## 11) المرحلة التالية
+غير مفعّل حتى الآن:
+- Live OpenAI API.
+- Live Gemini API.
+- Production GitHub/Drive runtime adapters.
+- Production credentials/identity provider.
+- Public runtime deployment.
 
-`RUNTIME-06 — Sandbox Integration Harness`
+الـReadiness Gate يمنع اعتبار النظام Production-ready تلقائيًا.
 
-الخطوط العريضة:
-- بيئة Sandbox منفصلة تفشل مغلقًا إذا استهدفت Production بالخطأ.
-- GitHub sandbox adapter لمسار/branch اختبار فقط.
-- Drive sandbox adapter داخل test folder مستقل فقط.
-- End-to-end persistence verification في الـsandbox.
-- Cleanup / rollback موثق.
-- أي تفعيل Production أو live AI credentials يظل قرارًا منفصلًا بعد نجاح الـsandbox.
+## 13) القرار المطلوب قبل المرحلة التالية
 
-## 12) Startup Protocol لأي شات جديد
+وصل النظام لأول بوابة تحتاج قرار مالك:
 
-عند قول المستخدم:
-`ادخل جيت هب صندوق مطبعجي`
-أو
+`OWNER_DECISION_FOR_LIVE_PROVIDER_AND_DEPLOYMENT`
+
+المطلوب تحديده قبل عبور البوابة:
+1. هل يتم تفعيل OpenAI + Gemini live الآن أم نستمر بالـMocks؟
+2. أين يُستضاف الـserver-side Orchestrator؟
+3. كيف تُجهز Production credentials/secrets؟
+
+حتى صدور هذا القرار، Production activation يظل محظورًا.
+
+## 14) Startup Protocol
+
+عند قول:
 `كمل مشروع صندوق مطبعجي`
 
 نفذ:
+1. اقرأ هذا الكتاب.
+2. اقرأ أحدث Runtime checkpoint إذا المهمة تقنية.
+3. افحص commits بعد آخر checkpoint فقط.
+4. لا تعد Discovery من الصفر.
+5. لا تبدأ من MVP القديم في root إلا إذا كانت المهمة تخصه صراحة.
 
-1. اقرأ `صندوق_مطبعجي.md`.
-2. اقرأ `صندوق_مطبعجي/PROJECT_BOOK.md`.
-3. اقرأ أحدث Runtime checkpoint إذا المهمة تقنية.
-4. افحص commits بعد آخر checkpoint فقط.
-5. إذا المهمة تخص Case بعينه، اقرأ Case + Room + Drive metadata فقط.
-6. لا تعيد اكتشاف المشروع من الصفر.
-7. بعد تقدم جوهري، حدّث هذا الكتاب بخلاصة عالية المستوى فقط.
-
-## 13) سياسة الكتاب
-
-هذا الكتاب يحتفظ بالخطوط العريضة فقط:
-- هوية المشروع.
-- المصدر الرسمي.
-- طريقة التشغيل.
-- القواعد العامة.
-- حالة الذاكرة والـRuntime.
-- آخر نقطة استكمال.
-
-التفاصيل التنفيذية تبقى في Cases / Rooms / Schema / Runtime / Checkpoints.
-
-## 14) Latest Continuation Point — 2026-09-12
-
-آخر نقطة استكمال موثقة:
+## 15) Latest Continuation Point — 2026-09-12
 
 - Project separation: مكتمل.
 - Memory integrity: مكتمل كأساس.
-- Runtime build: وصل إلى v0.5.
-- Auth/Audit/Adapter contract hardening: مكتمل محليًا.
-- Regression + contract tests: PASS.
-- Production integrations: غير مفعلة.
-- Next task: `RUNTIME-06`.
-
-لا تبدأ من MVP القديم في root إلا إذا كانت المهمة تخصه صراحة؛ البناء التقني الجديد يبدأ من `runtime/`.
+- Runtime: v0.7.
+- Sandbox live smoke: PASS.
+- Initial CI: SUCCESS.
+- Production: غير مفعّل.
+- Next gate: قرار المالك بشأن Live AI + Hosting + Secrets.
