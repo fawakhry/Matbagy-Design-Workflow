@@ -1,237 +1,132 @@
 # كتيب مشروع صندوق مطبعجي — Project Continuation Book
 
-> **Canonical continuation checkpoint** لأي شات/Agent جديد. لا تبدأ المشروع من الصفر.
+> هذا هو المرجع المختصر الرسمي لاستكمال مشروع صندوق مطبعجي من أي شات جديد. لا تبدأ Discovery من الصفر.
 
-## 0) Routing
+## 1) المصدر الرسمي
 
 - Repository: `fawakhry/Matbagy-Design-Workflow`
 - Branch: `agent/initial-mvp`
 - Entry: `صندوق_مطبعجي.md`
-- Continuation Book: `صندوق_مطبعجي/PROJECT_BOOK.md`
-- Operating Instructions: `صندوق_مطبعجي/اقرأني_أولاً.md`
-- Latest integrity checkpoint file: `صندوق_مطبعجي/CHECKPOINT_2026-09-12.md`
+- Book: `صندوق_مطبعجي/PROJECT_BOOK.md`
+- Operating instructions: `صندوق_مطبعجي/اقرأني_أولاً.md`
+- Detailed cases: `صندوق_مطبعجي/DESIGN_CASES/`
+- Watch/index: `صندوق_مطبعجي/WATCH/`
+- Knowledge: `صندوق_مطبعجي/KNOWLEDGE/`
+- Schemas/contracts: `صندوق_مطبعجي/SCHEMA/`
 
-ممنوع استخدام `fawakhry/Matbagy` أو `TrendOs/FOKHA_BRAIN` كبديل لذاكرة Design Cases.
+`fawakhry/Matbagy` و`fawakhry/TrendOs/FOKHA_BRAIN` ليسا ذاكرة المشروع.
 
-## 1) Current Checkpoint
+## 2) هدف المشروع
 
-- checkpoint_date: `2026-09-12`
-- previous branch tip before integrity work: `d28b645961aa801e30fa55a110e02a5186b6951f`
-- integrity checkpoint commit created: `5fe85f9302438836eca821373fef34bcd16bd951`
-- project_memory_version: `V1.8`
-- memory_mode: `AUTO_PERSIST + AUTO_ARCHIVAL_FINAL_SELECTION`
-- ai_authority: `ADVISORY_ONLY`
-- production_orchestrator: `NOT_YET_IMPLEMENTED_IN_PRODUCTION`
-- gemini_direct_github_agent: `NOT_YET_RUNTIME_VERIFIED`
-- temporary shared-ai mode: `GITHUB ROOMS + MANUAL BRIDGE`
+صندوق مطبعجي هو ذاكرة مستقلة لشغل التصميمات تحفظ الحالات والنسخ والأصول والقرارات والتعلم بحيث يمكن استكمال العمل من آخر حالة موثقة بدل البدء من الصفر.
 
-## 2) What was completed on 2026-09-12
+المسار العام:
 
-### GitHub
+`Chat -> Case -> Versions -> Assets -> Decisions -> Lessons -> Knowledge`
 
-تم تنفيذ التالي فعليًا على الفرع الرسمي:
+## 3) طريقة الحفظ الحالية
 
-1. إنشاء `PROJECT_BOOK.md` كنقطة استكمال رسمية.
-2. تحديث `صندوق_مطبعجي.md` ليجبر أي شات جديد على قراءة الكتيب وعدم بدء Discovery من الصفر.
-3. تحديث `INSTRUCTIONS/EXTRACT_OLD_CHAT.md` وإزالة Approval Gate القديمة.
-4. تحديث `PROMPTS/MASTER_PROMPT.md` ليتوافق مع Auto-Persist + Continuation Book.
-5. مزامنة `WATCH/ACTIVE_CASES.md` مع حالة الـCases الفعلية.
-6. تحديث `KNOWLEDGE/INDEX.md` ليعكس الحالات المغلقة وطابور Knowledge Extraction الحقيقي.
-7. إنشاء `CHECKPOINT_2026-09-12.md` يسجل أعمال النزاهة والإصلاح.
+- النظام يعمل بـ`AUTO_PERSIST`.
+- حفظ الذاكرة لا ينتظر عبارة اعتماد يدوية.
+- الحفظ لا يساوي اعتماد التصميم النهائي ولا يساوي أمر تنفيذ.
+- النسخ المرفوضة والفاشلة تُحفظ كـNegative Learning ولا تُستخدم كقالب إيجابي.
+- كل Case/Asset/Version/Knowledge يستخدم ID ثابتًا قدر الإمكان.
 
-### Google Drive
+## 4) مصادر الحقيقة
 
-تم إصلاح Path Drift/Duplicates بدون كسر File IDs:
+- GitHub: حالة الـCases، العقود، القرارات، الـKnowledge والـmetadata.
+- Google Drive: الصور والأصول الفعلية.
+- Drive File ID أقوى من اسم الملف أو المسار.
+- الحقائق التشغيلية الحية مثل Order/Payment/Inventory/Delivery ليست من ذاكرة التصميم؛ مصدرها نظام التشغيل المختص عند الربط مستقبلًا.
 
-#### DESIGN-2026-000009
-- Canonical folder: `1aZodLEaovQH-AjUCV3K8ebz7OPdTRbIU`
-- تم نقله تحت مجلد `2026` الرسمي مع الاحتفاظ بنفس Folder ID وكل File IDs.
-- Duplicate فارغ: `13d4CP4RQw4QrOsf-D_yn99kkJN77oT8n`
-- تم نقله إلى `04_Archive` وإعادة تسميته:
-  `LEGACY_EMPTY_DESIGN-2026-000009`
-
-#### DESIGN-2026-000010
-- Canonical folder remains: `1vF9cdFpkhAo2XiwRrxsVm0y_wrHQzWFC`
-- Legacy duplicate: `1cYMMybsqIBsrMrUdTvbkHdWxvlokBcfL`
-- تم نقله إلى `04_Archive` وإعادة تسميته:
-  `LEGACY_DUPLICATE_DESIGN-2026-000010`
-
-لم يتم حذف أي Canonical customer asset أو تغيير File ID صحيح.
-
-## 3) Canonical workflow
-
-المسار الرسمي:
-
-`READ -> EXTRACT -> DEDUP -> CREATE/UPDATE CASE -> AUTO-SELECT ARCHIVAL FINAL -> UPLOAD AVAILABLE ASSETS -> WRITE DRIVE IDS -> PERSIST GITHUB -> OPTIONAL VERIFY`
-
-لا تنتظر:
-- `اعتمد وسجل`
-- `تمام سجل`
-- `اعتمد التصميم النهائي`
-
-كشرط للحفظ.
-
-لكن:
-
-`ARCHIVAL FINAL != CUSTOMER APPROVAL != EXECUTION COMMAND`
-
-إذا لا توجد موافقة عميل موثقة:
-`customer_approval_status: NOT_DOCUMENTED`
-
-## 4) Sources of Truth
-
-### Design memory
-- GitHub: Cases / Rooms / Schemas / Knowledge
-- Google Drive: actual image/assets
-
-### Live business facts
-Order / Payment / Production / Inventory / Delivery لا تؤخذ من AI memory. مستقبلًا تأتي من TrendOS source-of-truth/connectors فقط.
-
-## 5) Google Drive structure
+## 5) Google Drive
 
 Project Root:
 - `مشروع مطبعجي - Matbagy Project`
-- ID: `1kP_JAO-ZOJltX9FCkAsylxYAfRar-RQV`
+- Folder ID: `1kP_JAO-ZOJltX9FCkAsylxYAfRar-RQV`
 
-Children:
-- `01_Design_Cases` — `1qhoxC_c2MF3X_hhHcWiDo2SzW2ySCch_`
-- `02_Orders` — `19vhyOha215dLr5_pxv8BdZy_-sq7LgDm`
-- `03_Shared_Assets` — `1cBMs21DKCuTPzcfmkj2UjgFfHdqQGVgl`
-- `04_Archive` — `1kke5hm_Bsq1Q_XHEuTpOkTTRkjpMEz5K`
-- `05_System` — `14amOaEUH4kGP4iFWTlMDfZ1c3c9edMH7`
+Canonical case path:
+`01_Design_Cases/YYYY/<CASE_ID>/`
 
-2026:
-- `1AP68g1gP0S3fNNzgyOkithg3VfH4kEgE`
+قاعدة الحفظ:
+- الصور الحقيقية في Drive.
+- GitHub يحتفظ بالـmetadata والـIDs والروابط فقط.
+- لا توضع صور العملاء أو الأسرار في GitHub العام.
 
-Canonical Case path:
-`My Drive/مشروع مطبعجي - Matbagy Project/01_Design_Cases/YYYY/<CASE_ID>/`
+## 6) قواعد التصميم والإنتاج — خطوط عريضة
 
-## 6) Current Case inventory
+- الحفاظ على ملامح الصور الأصلية وعدم تغيير الوجه أو إضافة فلاتر بدون طلب صريح.
+- تعديل المطلوب فقط وعدم تغيير بقية التصميم تلقائيًا.
+- المقاس المطلوب، الخلفية البيضاء، والاستروك المغلق عند طلبهم قيود إنتاج وليست اقتراحات جمالية.
+- `استخراج التصميم للطباعة` يعني Artwork نظيفًا وليس Screenshot أو واجهة.
+- القرارات والتعلم تُبنى على Evidence موثق، وليس على رأي AI وحده.
 
-### OPEN / ACTIVE
-- `DESIGN-2026-000001` — تصميم مدرسي وردي / حذف سطر الاسم — NOT_CONFIRMED
-- `DESIGN-2026-000003` — استبدال صورة داخل كولاج — NOT_CONFIRMED
-- `DESIGN-2026-000004` — 20×9 / أدهم ❤️ ندا — NOT_CONFIRMED
-- `DESIGN-2026-000006` — Graduation News / MS.Shahd Tag / CLASS OF 2026 — NOT_CONFIRMED
-- `DESIGN-2026-000008` — 3 تصميمات مدرسية منفصلة — UNDER_REVIEW; V4 FAILED_NO_RESULT; حذف سطر الاسم ما زال unresolved
-- `DESIGN-2026-000010` — تصميم رومانسي 20×9 — NOT_CONFIRMED
-- `DESIGN-2026-000011` — يامن A4 / الصور والعناصر + الاسم فقط / بدون موكاب — REVISION_REQUIRED
-- `DESIGN-2026-000012` — Person 360 turnaround — OPEN
-- `DESIGN-2026-000014` — Graduation Newspaper / A Journey from Student to Teacher فوق YOU DID IT — V2 OPEN
-- `DESIGN-2026-000100` — Mix / بطعم فطومه / 7×10 — OPEN
-- `DESIGN-2026-904530` — 20×9 / عدم تغيير الملامح — OPEN, fidelity review needed
+## 7) AI / Runtime
 
-### SAVED / LIKED
-- `DESIGN-2026-000002` — تنظيف ريندرات + نفس لوجو مطبعجي الأصلي فقط — EXPLICITLY_LIKED
+- AI authority: `ADVISORY_ONLY`.
+- المستخدم هو صاحب القرار النهائي.
+- الهدف المستقبلي: Orchestrator يربط ChatGPT/Gemini/GitHub/Drive.
+- الوضع الحالي: GitHub Rooms + Manual Bridge؛ لا يوجد Orchestrator إنتاجي كامل حتى الآن.
+- الواجهة الموجودة في root هي MVP تجريبي مستقل، وليست Runtime لذاكرة المشروع.
 
-### FINAL APPROVED but lifecycle needs reconciliation
-- `DESIGN-2026-000009` — إسراء / خلفية بيضاء — Case file = FINAL_APPROVED؛ لا نختلق CLOSED بدون evidence إضافي
+## 8) الفصل عن باقي المشاريع
 
-### CLOSED
-- `DESIGN-2026-000005` — كارت فرح شبابي — FINAL_APPROVED / V2
-- `DESIGN-2026-000007` — Graduation Newspaper — FINAL_APPROVED / V1 / NO_REUSABLE_KNOWLEDGE
-- `DESIGN-2026-000013` — أحمد وساره 15×21 — FINAL_APPROVED / V2 / Knowledge = PENDING_EXTRACTION
+قرار تنظيمي ثابت من 2026-09-12:
 
-## 7) Important learning already evidenced
+- كل مشروع يحتفظ بذاكرته داخل Repository/Branch رسمي خاص به.
+- FOKHA_BRAIN أو أي Portfolio عام يحتفظ فقط باسم المشروع، حالته العامة، ورابط المصدر الرسمي.
+- لا تحفظ قرارات مطبعجي التفصيلية أو قواعده أو Knowledge الخاصة به داخل TrendOS/FOKHA_BRAIN.
+- لا تكرر نفس الحقيقة الحية في أكثر من مشروع.
+- عند وجود تعارض، المصدر الرسمي للمشروع وأحدث Evidence موثق هما المرجع.
 
-- حافظ على ملامح الأشخاص؛ لا Filter/تنعيم/تغيير وجه بدون طلب صريح.
-- عند تعديل عنصر محدد، لا تغير باقي التصميم بلا طلب.
-- `حذف سطر الاسم كله` = إزالة السطر كوحدة كاملة.
-- `كل صورة لوحدها` في سياق القالب = Output مستقل لكل صورة عندما يكون هذا هو المقصود.
-- `استخراج التصميم للطباعة` = Artwork نظيف، لا Screenshot.
-- الخلفية البيضاء أو الاستروك الأسود المغلق عند طلبهما قيود إنتاج.
-- FAILED/REJECTED لا يمحى؛ يستخدم Negative Learning.
-- الصور الحقيقية لا تحفظ في GitHub العام.
+## 9) معلومات جُمعت من أماكن أخرى ثم تم اعتمادها هنا
 
-## 8) Knowledge Registry current state
+تم تجميع الخلاصة المفيدة التي كانت موزعة سابقًا في TrendOS/FOKHA_BRAIN، وأهمها:
 
-تم تحديث `KNOWLEDGE/INDEX.md`.
+- فصل ذاكرة كل مشروع عن المشاريع الأخرى.
+- استخدام Repository + Branch + Entry Point موثق بدل التخمين من الاسم.
+- الحفاظ على IDs الثابتة وروابط المصدر.
+- الفصل بين Prepared / Tested / Deployed / Verified.
+- تنفيذ تغييرات صغيرة قابلة للرجوع بدل إعادة البناء الكبير.
+- تحويل الشغل المكتمل إلى Evidence ثم Lessons ثم Knowledge Candidates.
+- عدم تحويل رأي AI إلى قاعدة عامة بدون Evidence كافٍ.
+- الحفاظ على الفشل والرفض للتعلم السلبي.
+- عدم وضع secrets أو أصول العملاء الخاصة في GitHub العام.
 
-Extraction Queue الحالية:
-1. `DESIGN-2026-000013` — PENDING_EXTRACTION — أولوية أولى.
-2. `DESIGN-2026-000005` — CLOSED/FINAL — راجع LESSONS واستخرج Candidates إن كان Evidence كافيًا.
-3. `DESIGN-2026-000007` — NO_REUSABLE_KNOWLEDGE — لا عمل إضافي.
+هذه المبادئ أصبحت محفوظة هنا كسياق المشروع، وأي تفاصيل تخص مشاريع أخرى تبقى في مصادرها هي.
 
-لا توجد حتى الآن Knowledge Rule رسمية بحالة `PROMOTED / GLOBAL_ACTIVE` داخل registry.
+## 10) الحالة العامة الحالية
 
-## 9) UI / Runtime reality
+- الذاكرة الرسمية موجودة على `agent/initial-mvp`.
+- Auto-Persist فعال كسياسة المشروع.
+- Drive cleanup الأساسي لحالات duplicate/path drift تم تنفيذه في 2026-09-12 مع الحفاظ على IDs الصحيحة.
+- WATCH وKnowledge registry تم تحديثهما في نفس جولة النزاهة.
+- تفاصيل الـCases الحالية موجودة داخل ملفات الـCase نفسها، وليس داخل هذا الكتاب المختصر.
 
-الـroot يحتوي Static Arabic RTL MVP:
-- Dashboard
-- Templates
-- New Request
-- Workflow
-- Proof Approval
-- Preflight
-- Activity
-- Settings
-- JSON backup/restore
+## 11) Startup Protocol لأي شات جديد
 
-لكن حاليًا:
-- `localStorage` only
-- no backend
-- no auth
-- no real uploads
-- no production integration
-
-اعتبره Experimental UI مستقلًا عن Canonical Memory runtime.
-
-## 10) AI Room reality
-
-Target architecture:
-
-`Matbagy UI -> Matbagy Orchestrator -> ChatGPT + Gemini -> GitHub Memory + Drive Assets`
-
-الحقيقة الحالية:
-- Orchestrator الحقيقي غير Production.
-- Gemini direct GitHub agent غير Runtime Verified.
-- Manual Bridge هو المسار المؤقت.
-- GitHub Rooms هي shared state المؤقتة.
-
-## 11) Remaining backlog
-
-### P0 — next integrity pass
-1. Verify Room completeness for every active Case: STATUS / CHATGPT / GEMINI / DECISION / SYNC_LOG / VERSIONS / DISAGREEMENTS / LESSONS / STORAGE as applicable.
-2. Reconcile `DESIGN-2026-000009`: FINAL_APPROVED vs lifecycle closure status.
-3. Run formal Knowledge Extraction for `000013`, then `000005`.
-4. Verify all Case metadata matches canonical Drive folder after the 2026-09-12 Drive cleanup.
-
-### P1 — memory quality
-1. Normalize YAML/frontmatter fields across older Cases.
-2. Standardize `archival_final_*` and `customer_approval_status` fields across historical Cases.
-3. Add machine-readable project status/index if needed for future Orchestrator.
-
-### P2 — productization
-1. Define backend/Orchestrator boundary.
-2. Add auth + roles + audit.
-3. Server-side OpenAI/Gemini integration.
-4. Safe Drive asset retrieval.
-5. TrendOS read-only Order Context first; no write coupling until authority contracts are explicit.
-
-## 12) New Chat Startup Protocol
-
-عندما يقول المستخدم:
+عند قول المستخدم:
 `ادخل جيت هب صندوق مطبعجي`
 أو
 `كمل مشروع صندوق مطبعجي`
 
-نفذ:
+نفذ بالترتيب:
 
 1. اقرأ `صندوق_مطبعجي.md`.
 2. اقرأ `صندوق_مطبعجي/PROJECT_BOOK.md`.
-3. اقرأ `صندوق_مطبعجي/CHECKPOINT_2026-09-12.md` عند الحاجة.
-4. اقرأ `صندوق_مطبعجي/اقرأني_أولاً.md`.
-5. افحص أحدث commits بعد checkpoint المسجل هنا.
-6. إذا يوجد Evidence أحدث، حدث الكتيب ثم استمر من الأحدث.
-7. إذا المهمة تخص Case: اقرأ Case + Room + Drive metadata قبل أي تنفيذ.
-8. لا تعيد Architecture discovery من الصفر إلا إذا ظهرت Evidence تناقض هذا checkpoint.
+3. افحص أحدث commit على `agent/initial-mvp` بعد آخر checkpoint معروف.
+4. إذا كانت المهمة تخص Case بعينه، اقرأ Case + Room + Drive metadata فقط.
+5. لا تعيد اكتشاف المشروع من الصفر.
+6. بعد أي تقدم جوهري، حدّث هذا الكتاب بخلاصة عالية المستوى فقط؛ التفاصيل تبقى في ملفاتها المتخصصة.
 
-## 13) Rule for future work
+## 12) سياسة الكتاب
 
-بعد أي تقدم جوهري في المشروع:
-- حدّث `PROJECT_BOOK.md`.
-- أضف/حدّث checkpoint عند الحاجة.
-- سجل Latest Verified State وNext Action.
-- لا تعتمد على ذاكرة الشات وحدها.
+هذا الكتاب يحتفظ **بالخطوط العريضة فقط**:
+- هوية المشروع.
+- المصدر الرسمي.
+- طريقة التشغيل.
+- القواعد العامة.
+- آخر حالة موثقة.
+- نقطة الاستكمال.
 
-هذا الملف هو الكتيب الرسمي للاستكمال بين الشاتات.
+أما التفاصيل التنفيذية، الحالات الفردية، الإصدارات، الملفات، والـEvidence فتظل داخل المجلدات المتخصصة للمشروع حتى لا يتحول الكتاب إلى نسخة ثانية من قاعدة البيانات.
