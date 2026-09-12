@@ -1,104 +1,85 @@
 # البرومبت الموحد — صندوق مطبعجي
 
-انسخ البرومبت التالي كما هو في أي شات تصميم قديم أو جديد، أو في شات جديد تريد منه استدعاء ذاكرة سابقة:
+> هذا الملف مرجع داخلي. المستخدم لا يحتاج لنسخه يدويًا.
 
----
+## Startup
 
-ادخل على GitHub وافتح مشروع `fawakhry/Matbagy-Design-Workflow` على فرع `agent/initial-mvp`.
+ابدأ دائمًا من:
+- Repository: `fawakhry/Matbagy-Design-Workflow`
+- Branch: `agent/initial-mvp`
+- Entry: `صندوق_مطبعجي.md`
+- Continuation Book: `صندوق_مطبعجي/PROJECT_BOOK.md`
+- Instructions: `صندوق_مطبعجي/اقرأني_أولاً.md`
 
-ابدأ من الملف:
-`صندوق_مطبعجي.md`
+## قاعدة الاستكمال
 
-ثم اقرأ كاملًا:
-`صندوق_مطبعجي/اقرأني_أولاً.md`
+لا تبدأ من الصفر.
+اقرأ `PROJECT_BOOK.md` أولًا، ثم افحص commits الأحدث من checkpoint المسجل فيه. إذا ظهرت Evidence أحدث، حدث الكتيب واستمر من آخر حالة متحققة.
 
-ونفّذ النظام الرسمي الموجود في صندوق مطبعجي حسب هدفي في هذه المحادثة.
+## عند استخراج شات تصميم
 
-## إذا كانت هذه المحادثة تحتوي على شغل تصميم قديم أو حالي
+1. اقرأ المحادثة كاملة.
+2. افصل Design Cases المستقلة.
+3. اعمل Dedup قبل إنشاء Case جديدة.
+4. استخرج Request / text / dimensions / assets / versions / feedback / acceptance / rejection / failures / rules / tags.
+5. استخدم `DESIGN_CASE_SCHEMA.md` و`ASSET_LINKING_CONTRACT.md`.
+6. Order ID غير الموثق = `UNKNOWN`.
+7. خصص Asset ID لكل صورة/ملف.
+8. لا تضع صور العملاء على GitHub العام.
 
-اقرأ المحادثة كاملة من أول رسالة إلى آخر رسالة متاحة.
-استخرج كل Design Case مستقلة وافصل الحالات المختلفة عن بعضها.
+## Auto-Persist — السلوك الرسمي
 
-لكل Case استخرج:
-- طلب العميل الأصلي.
-- النصوص المطلوبة حرفيًا.
-- نوع المنتج والمقاس والكمية إن وجدت.
-- الصور المرسلة ودور كل صورة.
-- الصور المرجعية ودورها.
-- التعليمات والقيود وMust Keep وMust Avoid.
-- كل المحاولات والنتائج بالترتيب.
-- البرومبتات أو التعليمات المستخدمة إن كانت ظاهرة.
-- تعديلات العميل بعد كل محاولة.
-- ما تم رفضه وما تم قبوله.
-- النسخة النهائية فقط إذا كانت مؤكدة.
-- Reusable Rules وقواعد التعلم.
-- Search Tags.
+طبق:
+- `SCHEMA/AUTO_PERSISTENCE_POLICY.md`
+- `SCHEMA/APPROVAL_COMMAND_ROUTER.md`
 
-طبّق دائمًا:
-`SCHEMA/DESIGN_CASE_SCHEMA.md`
-و
-`SCHEMA/ASSET_LINKING_CONTRACT.md`
+المسار:
 
-إذا كان Order ID موجودًا بوضوح فسجله؛ وإلا استخدم `UNKNOWN` ولا تخترعه.
-لكل صورة/ملف خصص Asset ID مستقل.
+`READ -> EXTRACT -> DEDUP -> CREATE/UPDATE CASE -> AUTO-SELECT ARCHIVAL FINAL -> UPLOAD AVAILABLE ASSETS -> WRITE DRIVE IDS -> PERSIST GITHUB -> OPTIONAL VERIFY`
 
-### قبل إنشاء Case جديدة — منع التكرار
+لا تنتظر `اعتمد وسجل` أو `تمام سجل` كشرط للحفظ.
 
-ابحث أولًا داخل `صندوق_مطبعجي/CASES/` عن حالة مسجلة قد تكون نفس المحادثة أو نفس الشغل.
-استخدم قدر الإمكان: `source_reference`، تاريخ المحادثة، الطلب الخام، نوع المنتج، المقاس، النصوص، Asset descriptions، وأي Case ID ظاهر.
+## Final Selection
 
-- إذا ثبت أنها نفس الحالة: **لا تنشئ Case ID جديدة**. استخدم الـCase ID الحالية وحدّثها أو اعمل Backfill للصور/البيانات الناقصة مع الحفاظ على التاريخ.
-- إذا كان التشابه غير كافٍ لإثبات أنها نفس الحالة: لا تدمجها تلقائيًا؛ اعرضها كحالة محتملة تحتاج مراجعة.
-- إذا لم توجد حالة مطابقة: خصص Case ID جديد عند الحفظ فقط.
+1. Explicit Final Evidence.
+2. Latest Successful Non-Rejected Result لم يتبعه طلب تعديل.
+3. Latest Explicitly Liked/Accepted Result غير مرفوض لاحقًا.
+4. وإلا `NO_VALID_FINAL_ASSET`.
 
-**قبل التسجيل:**
-اعرض لي Draft كاملًا ومنظمًا فقط، ولا تسجل Case جديدة ولا ترفع صورًا قبل موافقتي الصريحة.
+`ARCHIVAL FINAL != CUSTOMER APPROVAL`.
 
-عندما أقول لك مثلًا:
-`تمام سجل`
-أو
-`اعتمد وسجل`
+## عند استدعاء شغل قديم
 
-نفذ الحفظ طبقًا للنظام:
-- إذا كانت Case موجودة بالفعل، حدّث نفس Case ID ولا تنشئ نسخة مكررة.
-- إذا كانت جديدة، احفظها في GitHub داخل `CASES/YYYY/`.
-- Google Drive هو مخزن الصور الرسمي.
-- Root Folder ID: `1qhoxC_c2MF3X_hhHcWiDo2SzW2ySCch_`.
-- أنشئ/استخدم مجلد السنة ثم مجلدًا باسم Case ID.
-- ارفع الصور/الملفات المتاحة فعليًا من المحادثة إذا كانت الأدوات تسمح بالوصول إلى bytes/file reference.
-- سمِّ الملفات بما يبدأ بـAsset ID قدر الإمكان.
-- سجل Google Drive File ID الحقيقي لكل صورة تم رفعها.
-- إذا الصورة ظاهرة في المحادثة لكن ملفها نفسه غير متاح للأداة، لا تدعِ رفعها؛ استخدم `PENDING_UPLOAD` مع الحفاظ على Asset ID ودورها وموضعها في الشات.
+1. ابحث بـCase ID ثم Order ID ثم المنتج/المقاس/الكلمات.
+2. اقرأ Case + Room + Assets.
+3. استخدم Drive File IDs فقط للأصول `LINKED`.
+4. أعط الأولوية لـFINAL_APPROVED ثم EXPLICITLY_LIKED ثم PARTIAL_ACCEPTANCE.
+5. REJECTED/FAILED = Negative Learning فقط.
 
-## إذا كان هدفي هو استدعاء شغل قديم
+## AI Room
 
-إذا طلبت منك استدعاء حالة أو تصميم أو صورة أو "هات الشغل اللي شبه كذا" أو أعطيتك Case ID أو Order ID:
+ChatGPT وGemini مستشاران فقط:
+`AI_AUTHORITY = ADVISORY_ONLY`
 
-1. ابحث أولًا داخل `صندوق_مطبعجي/CASES/`.
-2. استخدم Case ID أو Order ID أو نوع المنتج أو المقاس أو الكلمات المفتاحية أو البحث الدلالي لتحديد الحالات المناسبة.
-3. اقرأ الحالات المطابقة كاملة.
-4. اقرأ Assets Map لكل حالة.
-5. لأي Asset حالته `LINKED`، استخدم Google Drive File ID للوصول إلى الصورة/الملف المرتبط.
-6. ميّز بوضوح بين original وreference وgenerated_result وfinal_approved.
-7. أعط الأولوية للحالات FINAL_APPROVED ثم EXPLICITLY_LIKED ثم PARTIAL_ACCEPTANCE.
-8. استخدم REJECTED فقط كخبرة سلبية لما يجب تجنبه.
-9. لا تخلط صور أو بيانات Case بأخرى.
-10. لا تعتبر الـAI مصدر حقيقة لرقم أوردر أو بيانات غير موجودة في المصادر.
+الـOrchestrator الحقيقي غير Production حاليًا؛ استخدم GitHub Rooms + Manual Bridge عند الحاجة.
 
-إذا وجدت الحالة لكن الصورة `PENDING_UPLOAD`، قل بوضوح إن سجل الصورة موجود لكن الملف نفسه لم يتم ربطه على Google Drive بعد.
+## الحقيقة
 
-## قاعدة عامة
+افصل:
+`CUSTOMER_FACT | OWNER_DECISION | CHATGPT_OPINION | GEMINI_OPINION | SYSTEM_STATE | INFERRED | UNKNOWN`
 
-لا تبدأ من الصفر إذا كانت الذاكرة تحتوي حالة أو قاعدة مفيدة.
-لا تخترع حقائق أو روابط أو موافقات.
-افصل دائمًا بين `EXPLICIT` و`INFERRED` و`UNKNOWN`.
-صندوق مطبعجي مستقل عن الصندوق الأسود لترند مول وTrendOS Production.
+لا تخترع IDs أو approvals أو live order/payment/production facts.
 
----
+## Safe Delete
 
-## الاستخدام المختصر بعد إرسال البرومبت مرة واحدة
+قل `SAFE_TO_DELETE_CHAT` فقط بعد تحقق حفظ Case/Timeline/Versions/Assets/Archival Final وعدم بقاء معلومة مهمة داخل الشات فقط.
 
-- لاستخراج الشات: `استخرج الشات ده`.
-- بعد مراجعة Draft: `تمام سجل`.
-- للاستدعاء: `استدعي DESIGN-2026-000001`.
-- أو: `هاتلي الحالات المشابهة لتصميم مج 20×9`.
+## الأمر البشري المختصر
+
+يكفي أن يقول المستخدم:
+`ادخل جيت هب صندوق مطبعجي`
+
+أو:
+`كمل مشروع صندوق مطبعجي`
+
+والـAI يتولى باقي ملفات التشغيل تلقائيًا.
