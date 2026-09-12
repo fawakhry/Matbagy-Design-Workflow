@@ -2,7 +2,7 @@
 
 ## Status
 
-`RUNTIME_V0.9 / LIVE_AI_SANDBOX_CODE_READY / CLOUD_SANDBOX_PERSISTENCE_CODE_READY / CI_GREEN / NOT_DEPLOYED`
+`RUNTIME_V0.9 / LIVE_AI_SANDBOX_CODE_READY / CLOUD_SANDBOX_PERSISTENCE_CODE_READY / CI_GREEN / DEPLOY_TRIGGER_VERIFIED / BLOCKED_ON_5_EMPTY_GITHUB_ENV_SECRETS`
 
 ## Implemented
 
@@ -64,7 +64,7 @@ Files:
 
 Implemented:
 - OpenAI Responses API provider adapter.
-- Gemini Interactions API provider adapter.
+- Gemini provider adapter.
 - Server-side Cloudflare Worker boundary.
 - Sandbox Bearer auth and rate limit.
 - Reuses provider timeout/retry/circuit breaker.
@@ -91,17 +91,19 @@ File:
 `.github/workflows/deploy-worker-sandbox.yml`
 
 Rules:
-- `workflow_dispatch` only.
+- Supports controlled push trigger from dedicated branch `sandbox/deploy-live-ai` plus manual dispatch.
+- Uses GitHub Environment `matbagy-sandbox` as the single Phase A secret source.
 - Runs the complete Runtime test suite before deployment.
-- Requires Cloudflare GitHub Actions deployment credentials.
+- Validates five required secrets before any Cloudflare deploy.
+- Builds a temporary JSON secrets file, deploys via Wrangler `--secrets-file`, then removes the temporary file.
 - Does not activate Production.
 
 ## CI Evidence
 
-Latest verified Runtime CI before this checkpoint update:
-- Commit: `0f57a9c6dd162b6edfb9dee8f88b00a2153a58c4`
+Latest verified Runtime CI:
+- Commit: `b5389af956dc2934396864c6d6b3f264689096a9`
 - Workflow: `Matbagy Runtime Tests`
-- Run ID: `34713837364`
+- Run ID: `34714188215`
 - Conclusion: `success`
 
 Suite includes:
@@ -115,42 +117,67 @@ Suite includes:
 - Live AI provider tests.
 - Cloud Sandbox persistence tests.
 
-## Secrets / credentials boundary
+## First controlled deploy attempt
 
-Required for Phase A live AI Worker deployment:
+Dedicated deploy branch created:
+- `sandbox/deploy-live-ai`
+- SHA: `b5389af956dc2934396864c6d6b3f264689096a9`
+
+Deploy workflow run:
+- Workflow: `Deploy Matbagy Worker Sandbox`
+- Run ID: `34714788427`
+- Runtime test suite inside deploy job: PASS.
+- Secret validation: FAIL-CLOSED before deployment.
+- Cloudflare deploy step: SKIPPED.
+- No Worker deployment occurred.
+
+Validation log showed all five Phase A GitHub Environment secrets were empty/unconfigured:
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
 - `OPENAI_API_KEY`
 - `GEMINI_API_KEY`
 - `RUNTIME_BEARER_TOKEN`
-- GitHub Actions deploy secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
 
-Additional secrets only if Phase B sandbox persistence is enabled:
+No secret values were logged because no values existed.
+
+## Secrets / credentials boundary
+
+Required in GitHub Environment `matbagy-sandbox` for Phase A live AI Worker deployment:
+- `OPENAI_API_KEY`
+- `GEMINI_API_KEY`
+- `RUNTIME_BEARER_TOKEN`
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+
+Additional secrets only if Phase B sandbox persistence is enabled later:
 - `GITHUB_SANDBOX_TOKEN`
 - `GOOGLE_OAUTH_CLIENT_ID`
 - `GOOGLE_OAUTH_CLIENT_SECRET`
 - `GOOGLE_OAUTH_REFRESH_TOKEN`
 
-No raw secret values were committed.
+No raw secret values are committed.
 
-The secure OpenAI API-key setup flow was opened in ChatGPT, but this checkpoint does not assume that the user completed key creation or installed it in Cloudflare.
+The secure OpenAI API-key setup flow was opened in ChatGPT again after the failed deploy validation. This checkpoint does not assume the user completed it.
 
 ## Current Gate
 
-`CREDENTIAL_SETUP_AND_CLOUDFLARE_DEPLOY`
+`ADD_5_GITHUB_ENV_SECRETS_THEN_RERUN_DEPLOY`
 
-Code and CI preparation are ready. The system is not yet allowed to claim:
+There is no remaining code or CI blocker for Phase A. The only verified blocker is missing external account credentials in GitHub Environment `matbagy-sandbox`.
+
+The system is not yet allowed to claim:
 - Cloudflare Worker deployed;
 - real OpenAI/Gemini live smoke passed;
 - external Worker persistence enabled;
 - Production ready.
 
-## After credentials become available
+## Resume sequence after secrets are added
 
-Execute in this order:
-1. Configure Cloudflare Worker Secrets for Phase A.
-2. Configure Cloudflare GitHub Actions deploy credentials.
-3. Run manual deploy workflow.
-4. Verify `/health`.
+1. Re-trigger `sandbox/deploy-live-ai` by moving the branch to the current approved Runtime commit or rerun the failed deploy job.
+2. Confirm deploy workflow success.
+3. Capture Worker URL.
+4. Verify `GET /health`.
 5. Execute synthetic `@GPT`, `@Gemini`, and BOOM live turns.
 6. Record live-provider evidence.
-7. Only then consider enabling Phase B sandbox persistence.
+7. Only then consider Phase B sandbox persistence.
 8. Production remains a separate later owner decision.
