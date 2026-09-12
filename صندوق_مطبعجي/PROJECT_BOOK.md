@@ -22,8 +22,8 @@
 ## 3) سياسة الذاكرة
 
 - `AUTO_PERSIST` هو الوضع الرسمي.
-- الحفظ لا ينتظر عبارة اعتماد يدوية.
-- الحفظ لا يساوي اعتماد نهائي ولا أمر تنفيذ.
+- الحفظ لا ينتظر اعتمادًا يدويًا.
+- الحفظ لا يساوي اعتمادًا نهائيًا ولا أمر تنفيذ.
 - الفشل والرفض يُحتفظ بهما كـNegative Learning.
 - AI authority = `ADVISORY_ONLY`.
 
@@ -36,13 +36,13 @@
 
 ## 5) Google Drive
 
-Project Root ID:
+Canonical Project Root ID:
 `1kP_JAO-ZOJltX9FCkAsylxYAfRar-RQV`
 
 Canonical Case path:
 `01_Design_Cases/YYYY/<CASE_ID>/`
 
-Sandbox Runtime folder:
+Runtime Sandbox folder:
 - `99_Runtime_Sandbox`
 - ID: `1pTM4Xw98qnd1XoPKpBDVel21CXCQpZoF`
 
@@ -72,69 +72,63 @@ Sandbox Runtime folder:
 
 ## 9) Runtime — الحالة الحالية
 
-Current status:
+`RUNTIME_V0.9 / LIVE_AI_SANDBOX_CODE_READY / CLOUD_SANDBOX_PERSISTENCE_CODE_READY / CI_GREEN / NOT_DEPLOYED`
 
-`RUNTIME_V0.7 / SANDBOX_LIVE_SMOKE_PASS / CI_INITIAL_RUN_SUCCESS / PRODUCTION_DECISION_GATE`
-
-الطبقات المبنية:
-- v0.1 Orchestrator Core.
-- v0.2 Storage mocks.
-- v0.3 Provider + Turn Runtime.
-- v0.4 Local HTTP boundary.
-- v0.5 Auth/Audit/Adapter contracts/Provider resilience/Rate limit.
-- v0.6 Sandbox Integration Harness.
-- v0.7 Readiness Gate + GitHub Actions CI.
+الطبقات المبنية وصلت إلى:
+- Orchestrator + Storage + HTTP.
+- Auth/Audit/Resilience.
+- GitHub/Drive Sandbox isolation.
+- CI + Readiness gates.
+- Cloudflare Worker boundary.
+- Live OpenAI/Gemini provider adapters.
+- Optional GitHub/Drive sandbox persistence adapters.
 
 ## 10) Sandbox verification
 
-GitHub sandbox:
-- Branch: `sandbox/runtime-v06`.
-- Allowed write prefix: `runtime-sandbox/`.
-- Live create/read/delete smoke: PASS.
+- GitHub sandbox create/read/delete smoke: PASS.
+- Drive sandbox create/read/delete smoke: PASS.
+- Canonical Cases/production targets لم تُستخدم في اختبارات الـsandbox.
+- External Worker persistence يظل OFF افتراضيًا حتى ينجح Live AI deployment أولًا.
 
-Drive sandbox:
-- Folder: `99_Runtime_Sandbox`.
-- Live create/read/delete smoke: PASS.
+## 11) القرار المعماري الحالي
 
-Canonical Cases/production targets لم تُستخدم في اختبارات الـsandbox.
+تم اعتماد المسار:
 
-التفاصيل التقنية في:
-- `runtime/SANDBOX_TARGETS.md`
-- `صندوق_مطبعجي/CHECKPOINT_RUNTIME_2026-09-12.md`
+`Cloudflare Worker Sandbox -> OpenAI + Gemini`
 
-## 11) CI / Verification
+ثم بعد نجاح Live AI smoke فقط:
 
-- Workflow: `Matbagy Runtime Tests`.
-- Node 22.
-- بدون Secrets.
-- أول تشغيل مسجل: SUCCESS.
-- Local sandbox/readiness tests: PASS.
+`Cloudflare Worker Sandbox -> GitHub Sandbox + Drive Sandbox`
 
-## 12) Runtime Safety Boundary
+لا يوجد قرار معماري معلق لهذه المرحلة.
+
+## 12) Current Gate
+
+`CREDENTIAL_SETUP_AND_CLOUDFLARE_DEPLOY`
+
+المتبقي قبل Live Sandbox verification هو تجهيز الأسرار/صلاحيات النشر ثم تشغيل deploy اليدوي واختبارات live الاصطناعية.
+
+هذا Gate ليس Production approval.
+
+## 13) Runtime Safety Boundary
 
 غير مفعّل حتى الآن:
-- Live OpenAI API.
-- Live Gemini API.
-- Production GitHub/Drive runtime adapters.
-- Production credentials/identity provider.
-- Public runtime deployment.
+- أي canonical GitHub/Drive write من الـWorker.
+- Production customer data.
+- Production auth/identity.
+- Production public endpoint/domain.
+- أي ادعاء أن Cloudflare deployment أو live AI smoke تم قبل وجود Evidence فعلي.
 
-الـReadiness Gate يمنع اعتبار النظام Production-ready تلقائيًا.
+Production يظل قرارًا منفصلًا بعد نجاح الـLive Sandbox بالكامل.
 
-## 13) القرار المطلوب قبل المرحلة التالية
+## 14) المراجع التقنية
 
-وصل النظام لأول بوابة تحتاج قرار مالك:
+- Runtime details: `runtime/README.md`
+- Latest technical checkpoint: `صندوق_مطبعجي/CHECKPOINT_RUNTIME_2026-09-12.md`
+- Sandbox targets: `runtime/SANDBOX_TARGETS.md`
+- Cloudflare deployment runbook: `runtime/CLOUDFLARE_SANDBOX_DEPLOYMENT.md`
 
-`OWNER_DECISION_FOR_LIVE_PROVIDER_AND_DEPLOYMENT`
-
-المطلوب تحديده قبل عبور البوابة:
-1. هل يتم تفعيل OpenAI + Gemini live الآن أم نستمر بالـMocks؟
-2. أين يُستضاف الـserver-side Orchestrator؟
-3. كيف تُجهز Production credentials/secrets؟
-
-حتى صدور هذا القرار، Production activation يظل محظورًا.
-
-## 14) Startup Protocol
+## 15) Startup Protocol
 
 عند قول:
 `كمل مشروع صندوق مطبعجي`
@@ -146,12 +140,14 @@ Canonical Cases/production targets لم تُستخدم في اختبارات ا�
 4. لا تعد Discovery من الصفر.
 5. لا تبدأ من MVP القديم في root إلا إذا كانت المهمة تخصه صراحة.
 
-## 15) Latest Continuation Point — 2026-09-12
+## 16) Latest Continuation Point — 2026-09-12
 
 - Project separation: مكتمل.
 - Memory integrity: مكتمل كأساس.
-- Runtime: v0.7.
-- Sandbox live smoke: PASS.
-- Initial CI: SUCCESS.
+- Runtime: v0.9 code-ready.
+- Sandbox isolation smoke: PASS.
+- Runtime CI: GREEN حتى آخر تحقق مسجل.
+- Live AI architecture: Cloudflare Sandbox معتمد.
+- Cloudflare deploy/live-provider smoke: لم يتم إثباته بعد.
 - Production: غير مفعّل.
-- Next gate: قرار المالك بشأن Live AI + Hosting + Secrets.
+- Next gate: `CREDENTIAL_SETUP_AND_CLOUDFLARE_DEPLOY`.
