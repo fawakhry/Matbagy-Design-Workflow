@@ -1,41 +1,46 @@
-# Matbagy Runtime v0.3
+# Matbagy Runtime v0.4
 
-أول Runtime قابل للاختبار لصندوق مطبعجي، بدون أي اتصال إنتاجي خارجي.
+Runtime اختباري لصندوق مطبعجي، بدون أي اتصال إنتاجي خارجي.
 
 ## الهدف
 
-تحويل العقود المكتوبة في `صندوق_مطبعجي/SCHEMA/` إلى منطق تنفيذي deterministic يمكن اختباره قبل ربط OpenAI / Gemini / Google Drive / GitHub production writes.
+تحويل العقود المكتوبة في `صندوق_مطبعجي/SCHEMA/` إلى منطق تنفيذي يمكن اختباره قبل ربط OpenAI / Gemini / Google Drive / GitHub production writes.
 
 ## ما يعمل الآن
 
 ### Orchestrator Core v0.1
 - تطبيع Case state.
-- التحقق الأساسي من Case IDs وAsset binding.
-- تطبيق Auto-Selection للـarchival final حسب `AUTO_PERSISTENCE_POLICY.md`.
-- بناء Persist Plan بدون تنفيذ I/O.
-- Routing للرسائل: GPT / Gemini / BOOM.
-- بناء Shared Context Packet بأقل Context لازم.
+- التحقق من Case IDs وAsset binding.
+- Auto-Selection للـarchival final حسب السياسة الرسمية.
+- Persist Plan.
+- Routing: GPT / Gemini / BOOM.
+- Shared Context Packet.
 - منع AI من إغلاق Case أو اعتماد Final بنفسه.
-- Console محلي لاختبار JSON يدويًا.
 
 ### Storage Adapter Layer v0.2
-- `MemoryCaseStore` لاختبار upsert والاسترجاع.
-- `MemoryAssetStore` لمحاكاة asset linking بدون Drive حقيقي.
-- `persistCaseWithAdapters()` لتجربة Auto-Persist end-to-end داخل الذاكرة.
-- Watch state مشتق من Case state.
-- Audit trail تجريبي لكل عملية.
-- حساب LINKED / PENDING_UPLOAD / MISSING.
-- `SAFE_TO_DELETE_CHAT` لا يصبح true إلا بعد اكتمال binding في سيناريو الاختبار.
+- `MemoryCaseStore` و`MemoryAssetStore`.
+- Auto-Persist end-to-end بالمحاكاة.
+- Watch update + Audit trail.
+- LINKED / PENDING_UPLOAD / MISSING counts.
+- Safe-to-delete calculation في بيئة الاختبار.
 
 ### Provider + Turn Runtime v0.3
-- Provider contracts منفصلة عن الـCore.
-- `MockChatGPTProvider` و`MockGeminiProvider` بدون أي API خارجي.
-- Validation لردود الـProviders وTruth Labels.
-- `runOrchestrationTurn()` يشغل Turn كامل حسب GPT / Gemini / BOOM.
-- Shared Context يمرر أقل معلومات لازمة لكل Provider.
-- Provider outputs تبقى `CHATGPT_OPINION` / `GEMINI_OPINION` ولا تتحول إلى Customer Fact.
-- Auto-Persist بالمحاكاة يعمل بعد الـTurn مع Audit entry.
-- Case phase لا تتحول تلقائيًا إلى `FINAL_APPROVED` أو `CLOSED`.
+- Provider contracts مستقلة عن الـCore.
+- Mock ChatGPT / Gemini providers.
+- Truth-label validation لردود الـAI.
+- `runOrchestrationTurn()` لتشغيل Turn كامل.
+- AI outputs تبقى Opinions ولا تتحول إلى Customer Facts.
+
+### HTTP Boundary v0.4
+- Node HTTP server محلي فقط.
+- `GET /health`.
+- `POST /v1/turn`.
+- Request IDs.
+- Idempotency-Key replay protection.
+- JSON body limit = 1 MB.
+- Error envelope موحد.
+- يرفض التشغيل خارج `TEST` / `LOCAL` mode.
+- `production_integrations: false` مثبت في health response.
 
 ## ما لا يعمل بعد
 
@@ -44,7 +49,8 @@
 - لا Google Drive production read/write.
 - لا GitHub production write من داخل Runtime.
 - لا secrets أو credentials.
-- لا Auth أو Rate Limits.
+- لا Auth production.
+- لا Rate Limits production.
 - لا Production deployment.
 
 ## الاختبارات
@@ -53,6 +59,7 @@
 node runtime/orchestrator-core.test.mjs
 node runtime/storage-adapters.test.mjs
 node runtime/orchestrator-runtime.test.mjs
+node runtime/http-server.test.mjs
 ```
 
 المتوقع:
@@ -61,22 +68,34 @@ node runtime/orchestrator-runtime.test.mjs
 Matbagy Orchestrator Core v0.1 tests: PASS
 Matbagy Storage Adapter v0.2 tests: PASS
 Matbagy Orchestrator Runtime v0.3 tests: PASS
+Matbagy HTTP Runtime v0.4 tests: PASS
 ```
+
+## تشغيل محلي
+
+```bash
+MATBAGY_RUNTIME_MODE=LOCAL node runtime/http-server.mjs
+```
+
+ثم:
+- `GET http://127.0.0.1:8787/health`
+- `POST http://127.0.0.1:8787/v1/turn`
 
 ## Console
 
-افتح `runtime/console.html` من HTTP static server/GitHub Pages. لا يحتاج Backend.
+`runtime/console.html` لاختبار JSON مباشرة بدون Backend خارجي.
 
 ## المرحلة التالية
 
-`RUNTIME-04 — Server Boundary + Mock HTTP API`
+`RUNTIME-05 — Auth/Test Adapters/Contract Hardening`
 
-1. بناء HTTP contract محلي/اختباري بدون secrets.
-2. فصل auth/audit/request-id/error model عن منطق الـCore.
-3. إضافة idempotency وrequest tracing.
-4. بعدها فقط إنشاء adapters حقيقية في بيئة اختبار منفصلة.
-5. Runtime verification قبل أي Production activation.
+1. Test auth boundary.
+2. Persistent audit interface.
+3. GitHub/Drive adapter contracts مع mocks متوافقة.
+4. Provider timeout/retry/circuit-breaker behavior.
+5. Contract tests بين HTTP boundary والـadapters.
+6. بعد ذلك فقط إعداد بيئة اختبار حقيقية منفصلة قبل Production.
 
 ## قاعدة الأمان
 
-الـCore مستقل عن مزودي الخدمة. أي اتصال فعلي بـOpenAI/Gemini/Drive/GitHub يجب أن يكون Server-side وألا يضع secrets في Frontend أو Repository عام.
+أي اتصال فعلي بـOpenAI/Gemini/Drive/GitHub يجب أن يكون Server-side، وألا يضع secrets في Frontend أو Repository عام. لا يعتبر أي تكامل Production قبل Deploy + Runtime Verification موثق.
