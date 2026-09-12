@@ -22,35 +22,39 @@ Boundaries:
 
 ## 2) Phase A — Live AI, memory-only persistence
 
-Worker Secrets required before deploy:
+Use one setup location: GitHub Environment `matbagy-sandbox`.
+
+Add these five Environment Secrets:
 - `OPENAI_API_KEY`
 - `GEMINI_API_KEY`
 - `RUNTIME_BEARER_TOKEN`
-
-These values must exist only in Cloudflare Secrets / secure secret storage. Never commit them to GitHub or place them in Wrangler `vars`.
-
-GitHub Actions environment/repository secrets needed by the manual deploy workflow:
 - `CLOUDFLARE_API_TOKEN`
 - `CLOUDFLARE_ACCOUNT_ID`
 
-Deploy workflow:
+The manual workflow:
 `.github/workflows/deploy-worker-sandbox.yml`
 
-It is `workflow_dispatch` only and does not deploy on normal pushes.
+is `workflow_dispatch` only and performs this sequence:
+1. Run the complete Runtime test suite.
+2. Validate all five secrets are present.
+3. Build a temporary secrets JSON file inside the GitHub Actions runner.
+4. Deploy with Wrangler `--secrets-file`, so OpenAI/Gemini/runtime bearer values become encrypted Worker Secrets during the same deploy.
+5. Remove the temporary secrets file in an `always()` cleanup step.
+
+The raw values are never stored in tracked repository files or Wrangler `vars`.
 
 Default config keeps:
 `SANDBOX_PERSISTENCE_ENABLED=false`
 
 Expected first verification sequence:
 1. All CI tests pass.
-2. Configure Worker Secrets.
-3. Configure Cloudflare deploy credentials for GitHub Actions.
-4. Run the manual sandbox deploy workflow.
-5. Verify `GET /health` returns sandbox mode, production disabled and no blockers.
-6. Execute one synthetic `POST /v1/turn` using `@GPT`.
-7. Execute one synthetic `POST /v1/turn` using `@Gemini`.
-8. Execute one synthetic `POST /v1/turn` using `@الكل` / BOOM mode.
-9. Confirm provider outputs retain `CHATGPT_OPINION` / `GEMINI_OPINION` and `ADVISORY_ONLY` authority.
+2. Configure the five Environment Secrets in `matbagy-sandbox`.
+3. Run the manual sandbox deploy workflow.
+4. Verify `GET /health` returns sandbox mode, production disabled and no blockers.
+5. Execute one synthetic `POST /v1/turn` using `@GPT`.
+6. Execute one synthetic `POST /v1/turn` using `@Gemini`.
+7. Execute one synthetic `POST /v1/turn` using `@الكل` / BOOM mode.
+8. Confirm provider outputs retain `CHATGPT_OPINION` / `GEMINI_OPINION` and `ADVISORY_ONLY` authority.
 
 Do not use customer data for these first live checks.
 
@@ -85,7 +89,8 @@ Never store raw secret values in:
 - screenshots;
 - Cases/Rooms/Knowledge;
 - issue/PR comments;
-- test fixtures or logs.
+- test fixtures or logs;
+- normal chat messages.
 
 Local `.dev.vars*` and `.env*` are ignored by `.gitignore`.
 
@@ -96,7 +101,7 @@ Stop/fail closed if any of the following occurs:
 - GitHub branch does not start with `sandbox/`;
 - GitHub write path escapes `runtime-sandbox/`;
 - Drive sandbox ID equals canonical Drive root;
-- required Worker secret is missing;
+- a required secret is missing;
 - CI is red;
 - `/health` reports production integrations enabled;
 - AI response attempts to create customer approval/owner decision as fact.
