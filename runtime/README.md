@@ -1,6 +1,6 @@
-# Matbagy Runtime v0.7
+# Matbagy Runtime v0.9
 
-Runtime تدريجي لصندوق مطبعجي. الحالة الحالية وصلت إلى Sandbox Integration + CI Readiness، بدون أي Production activation.
+Runtime تدريجي لصندوق مطبعجي. وصل إلى Cloudflare Live-AI Sandbox code + optional sandbox persistence، بدون Production activation أو نشر Cloudflare مؤكد حتى الآن.
 
 ## الطبقات الحالية
 
@@ -10,52 +10,81 @@ Runtime تدريجي لصندوق مطبعجي. الحالة الحالية وص
 - Persist Plan.
 - GPT / Gemini / BOOM routing.
 - Shared Context Packet.
-- AI authority = `ADVISORY_ONLY`.
+- `AI_AUTHORITY = ADVISORY_ONLY`.
 
 ### v0.2 — Storage mocks
 - `MemoryCaseStore` و`MemoryAssetStore`.
 - Auto-Persist بالمحاكاة.
 - Watch update + audit trail.
-- Asset binding counts وsafe-to-delete calculation.
 
 ### v0.3 — Provider + Turn Runtime
-- Mock ChatGPT / Gemini providers.
+- Mock ChatGPT/Gemini providers.
 - Truth-label validation.
-- Full local orchestration turn.
+- Full orchestration turn.
 
 ### v0.4 — HTTP Boundary
-- `GET /health`.
-- `POST /v1/turn`.
-- Request IDs + Idempotency.
-- 1 MB JSON limit.
-- TEST/LOCAL only.
+- Health + turn endpoints.
+- Request IDs + idempotency.
+- JSON limits and standard errors.
 
 ### v0.5 — Contract Hardening
-- Test-only Bearer auth + operator role.
-- Memory/JSONL audit interface.
+- Test auth / audit interfaces.
 - GitHub/Drive contracts with mocks.
 - Provider timeout/retry/circuit breaker.
-- Test rate limiter.
-- HTTP + adapter + resilience tests.
+- Rate limiting.
 
 ### v0.6 — Sandbox Integration Harness
-- GitHub sandbox branch boundary: `sandbox/runtime-v06`.
-- Allowed GitHub write prefix: `runtime-sandbox/`.
+- GitHub sandbox branch: `sandbox/runtime-v06`.
+- Allowed GitHub prefix: `runtime-sandbox/`.
 - Drive sandbox folder: `99_Runtime_Sandbox`.
-- Drive sandbox folder ID: `1pTM4Xw98qnd1XoPKpBDVel21CXCQpZoF`.
-- Guard rejects canonical branch/path and canonical Drive root.
-- Live GitHub write/read/delete smoke: PASS.
+- Drive sandbox ID: `1pTM4Xw98qnd1XoPKpBDVel21CXCQpZoF`.
+- Live GitHub create/read/delete smoke: PASS.
 - Live Drive create/read/delete smoke: PASS.
-- Details: `runtime/SANDBOX_TARGETS.md`.
 
 ### v0.7 — Readiness + CI
-- `runtime/readiness.mjs` blocks Production automatically.
-- Readiness returns `OWNER_DECISION_FOR_LIVE_PROVIDER_AND_DEPLOYMENT` only after tests + sandbox smoke pass.
-- GitHub Actions workflow: `.github/workflows/runtime-tests.yml`.
-- First CI execution completed successfully.
-- Workflow uses Node 22 and no secrets.
+- Fail-closed readiness gate.
+- GitHub Actions Runtime test suite.
+- Production remains false by construction.
+- Cloudflare + live AI architecture has now been owner-approved, so the next gate is credential setup/deployment rather than architecture selection.
 
-## Tests
+### v0.8 — Live AI provider layer
+Files:
+- `runtime/live-providers.mjs`
+- `runtime/live-providers.test.mjs`
+- `runtime/cloudflare-worker.mjs`
+- `runtime/wrangler.jsonc`
+
+Implemented:
+- OpenAI Responses API adapter.
+- Gemini Interactions API adapter.
+- Cloudflare Worker server-side boundary.
+- Worker Bearer auth.
+- Worker rate limiting.
+- Provider timeout/retry/circuit breaker reused from the Runtime.
+- Secrets required server-side; none committed to GitHub.
+- Worker rejects non-SANDBOX configuration.
+
+### v0.9 — Cloud Sandbox persistence
+Files:
+- `runtime/cloud-sandbox-persistence.mjs`
+- `runtime/cloud-sandbox-persistence.test.mjs`
+- `runtime/CLOUDFLARE_SANDBOX_DEPLOYMENT.md`
+
+Implemented:
+- Real GitHub REST sandbox writer guarded to `sandbox/*` + `runtime-sandbox/`.
+- Google OAuth refresh-token access provider.
+- Real Drive multipart sandbox writer guarded to the exact sandbox folder.
+- Optional evidence persistence to both GitHub Sandbox + Drive Sandbox.
+- External persistence is **OFF by default** with `SANDBOX_PERSISTENCE_ENABLED=false`.
+- If enabled and a credential/write fails, Runtime fails closed instead of falling back to canonical targets.
+- Manual Cloudflare deploy workflow is `workflow_dispatch` only.
+
+## CI / Tests
+
+Runtime test workflow:
+`.github/workflows/runtime-tests.yml`
+
+It runs:
 
 ```bash
 node runtime/orchestrator-core.test.mjs
@@ -65,28 +94,44 @@ node runtime/http-server.test.mjs
 node runtime/runtime-v05.test.mjs
 node runtime/runtime-v06.test.mjs
 node runtime/readiness.test.mjs
+node runtime/live-providers.test.mjs
+node runtime/cloud-sandbox-persistence.test.mjs
 ```
 
-Local v0.6 + readiness tests: PASS.
-Initial GitHub Actions runtime suite: SUCCESS.
+Latest CI evidence before this documentation update:
+- Commit: `0f57a9c6dd162b6edfb9dee8f88b00a2153a58c4`
+- Workflow: `Matbagy Runtime Tests`
+- Conclusion: `success`
 
-## Production boundary
+## Cloudflare deployment
 
-Still NOT activated:
-- OpenAI live API.
-- Gemini live API.
-- Production Google Drive adapter.
-- Production GitHub write adapter.
-- Production auth/credentials.
-- Public runtime deployment.
+Runbook:
+`runtime/CLOUDFLARE_SANDBOX_DEPLOYMENT.md`
 
-## Current decision gate
+Manual deploy workflow:
+`.github/workflows/deploy-worker-sandbox.yml`
 
-`OWNER_DECISION_FOR_LIVE_PROVIDER_AND_DEPLOYMENT`
+Phase A requires Worker Secrets:
+- `OPENAI_API_KEY`
+- `GEMINI_API_KEY`
+- `RUNTIME_BEARER_TOKEN`
 
-Before crossing this gate, owner must choose/approve:
-1. Whether to activate live OpenAI + Gemini now or keep provider mocks.
-2. Runtime hosting target for the server-side Orchestrator.
-3. Production credential provisioning method.
+GitHub Actions deploy credentials:
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
 
-No Production activation happens automatically from this repository.
+Phase B optional persistence additionally requires:
+- `GITHUB_SANDBOX_TOKEN`
+- `GOOGLE_OAUTH_CLIENT_ID`
+- `GOOGLE_OAUTH_CLIENT_SECRET`
+- `GOOGLE_OAUTH_REFRESH_TOKEN`
+
+No secret values belong in the repository.
+
+## Current gate
+
+`CREDENTIAL_SETUP_AND_CLOUDFLARE_DEPLOY`
+
+Code/CI preparation is ready. The Worker has **not** been claimed as deployed or live-verified yet.
+
+Production remains disabled. A later explicit owner decision is still required before any canonical customer/Case/Drive write or Production endpoint is enabled.
