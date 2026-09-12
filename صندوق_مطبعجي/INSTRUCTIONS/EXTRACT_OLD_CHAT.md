@@ -1,99 +1,86 @@
 # استخراج محادثة قديمة — صندوق مطبعجي
 
+> **Current behavior:** Auto-Persist. هذا الملف يلغي أي نص Legacy سابق كان يطلب انتظار `اعتمد وسجل` قبل الحفظ.
+
+ابدأ من:
+- `../PROJECT_BOOK.md`
+- `../SCHEMA/AUTO_PERSISTENCE_POLICY.md`
+- `../SCHEMA/APPROVAL_COMMAND_ROUTER.md`
+- `../SCHEMA/DESIGN_CASE_SCHEMA.md`
+- `../SCHEMA/ASSET_LINKING_CONTRACT.md`
+
 ## المهمة
 
-اقرأ **المحادثة الحالية كاملة من أول رسالة إلى آخر رسالة متاحة** ثم حوّلها إلى Draft واحد أو أكثر من Design Cases حسب المحتوى.
+اقرأ المحادثة كاملة من أول رسالة إلى آخر رسالة متاحة، وافصل كل Design Case مستقلة.
 
-إذا كانت المحادثة تحتوي على أكثر من شغل تصميم مستقل، افصلها إلى Cases مستقلة. لا تخلط تصميمات أو عملاء مختلفين في Case واحدة إلا إذا كانوا بوضوح جزءًا من نفس الطلب.
+لكل Case استخرج فقط ما تدعمه المحادثة:
+- الطلب الأصلي.
+- النصوص حرفيًا.
+- نوع المنتج/المطبوع.
+- المقاس والوحدة والكمية.
+- الصور الأصلية والمراجع ودور كل Asset.
+- Layout / Style / Colors / Fonts إن ذكرت.
+- Must Keep / Must Avoid.
+- كل Attempt/Version ونتيجتها.
+- Feedback والتعديلات والقبول والرفض.
+- Order ID فقط إذا ظهر من مصدر موثوق، وإلا `UNKNOWN`.
+- Reusable Rules / Negative Learning / Search Tags.
 
-## ما يجب استخراجه
+## Dedup — قبل إنشاء Case
 
-استخرج فقط ما تدعمه المحادثة:
+ابحث داخل `CASES/` أولًا. إذا ثبت أنها نفس الحالة:
+- استخدم نفس Case ID.
+- نفذ Update/Backfill.
+- لا تنشئ Duplicate.
 
-1. الطلب الأصلي.
-2. النصوص المطلوبة حرفيًا.
-3. نوع المنتج/المطبوع.
-4. المقاس والوحدة والكمية إن وجدت.
-5. الصور الأصلية ودور كل صورة.
-6. الصور المرجعية ودورها.
-7. تعليمات التكوين/layout.
-8. الألوان والخطوط والأسلوب إن ذكرت.
-9. Must Keep.
-10. Must Avoid.
-11. كل محاولة/نتيجة زمنيًا.
-12. Feedback المستخدم بعد كل محاولة.
-13. التعديلات المطلوبة.
-14. ما تم قبوله.
-15. ما تم رفضه.
-16. النسخة النهائية إن كانت مؤكدة فقط.
-17. Order ID إن ظهر بوضوح، وإلا UNKNOWN.
-18. Reusable Rules.
-19. Search Tags.
+إذا لم يثبت التطابق، لا تدمج تلقائيًا.
 
-## التعامل مع الصور
+## Assets
 
-لكل صورة أو ملف مرئي أنشئ Asset Record مستقل.
+خصص Asset ID لكل ملف/صورة.
 
-أثناء الـDraft استخدم:
+- الصور الفعلية: Google Drive.
+- GitHub: metadata/IDs/links فقط.
+- `LINKED` لا تستخدم إلا بعد وجود Drive File ID حقيقي.
+- إذا الملف غير متاح: `PENDING_UPLOAD` أو `MISSING`.
 
-`DRAFT-A001`, `DRAFT-A002`...
+## Truth Labels
 
-وعند الحفظ تتحول إلى:
+`EXPLICIT | INFERRED | UNKNOWN`
 
-`<CASE_ID>-A001`, `<CASE_ID>-A002`...
+لا تحول INFERRED إلى Fact.
 
-لكل Asset سجّل:
+## Auto-Persist — إلزامي
 
-- `asset_id`
-- `source_role`
-- `conversation_position`
-- `purpose`
-- `instructions`
-- `attempt_id` إن وجد
-- `privacy_class`
-- `storage_provider: GOOGLE_DRIVE`
-- `asset_binding_status`: `PENDING_UPLOAD` إلى أن يتم الرفع فعليًا، أو `LINKED` إذا تم الرفع بنجاح
+بعد الاستخراج ومنع التكرار:
 
-لا تدعِ أن صورة رفعت إلى Drive بدون Google Drive File ID حقيقي.
+`CREATE/UPDATE CASE -> AUTO-SELECT ARCHIVAL FINAL -> UPLOAD AVAILABLE ASSETS -> WRITE DRIVE IDS -> PERSIST GITHUB`
 
-## تمييز الحقيقة
+لا تنتظر أي Approval Gate للحفظ.
 
-- `EXPLICIT`: مذكور بوضوح.
-- `INFERRED`: استنتاج معقول وموسوم كاستنتاج.
-- `UNKNOWN`: غير متوفر.
+لا تطلب:
+- `اعتمد وسجل`
+- `تمام سجل`
 
-لا ترفع INFERRED إلى حقيقة دون دليل أو موافقة المستخدم.
+كشرط للحفظ.
 
-## بوابة المراجعة
+## Final Selection
 
-بعد الاستخراج:
+طبق `AUTO_PERSISTENCE_POLICY.md`:
+1. Explicit final evidence إن وجد.
+2. آخر نتيجة ناجحة غير مرفوضة ولم يتبعها طلب تعديل.
+3. آخر نتيجة عليها قبول واضح ولم تُرفض لاحقًا.
+4. وإلا `NO_VALID_FINAL_ASSET`.
 
-- لا تكتب Case جديدة في `CASES/`.
-- لا ترفع الصور إلى Google Drive.
-- اعرض Draft منظمًا طبقًا لـ`SCHEMA/DESIGN_CASE_SCHEMA.md`.
-- أبرز UNKNOWN وINFERRED المهمة.
-- انتظر موافقة صريحة مثل `تمام سجل` أو `اعتمد وسجل`.
+هذا اختيار أرشيفي فقط ولا يساوي موافقة العميل.
 
-بعد الموافقة فقط، انتقل إلى `SAVE_APPROVED_CASE.md`.
+## بعد الحفظ
 
-## الحالات غير المكتملة
-
-إذا لم يصل الشات إلى اعتماد نهائي للتصميم:
-
-- `approval.status = NOT_CONFIRMED`
-- لا تخترع final_approved.
-- احتفظ بالتعديلات والرفض كخبرة تعلم.
-
-## المخرج قبل التسجيل
-
-اعرض:
-
-1. ملخص كل Case.
-2. Timeline للمحاولات والتعديلات.
-3. Assets Map.
-4. Order ID إن وجد.
-5. Final/Approval status.
-6. Reusable Rules.
-7. البيانات غير المؤكدة.
-
-ثم انتظر فقط موافقة التسجيل.
+اعرض عند توفرها:
+- Case ID
+- Case folder URL
+- Asset links
+- LINKED / PENDING / MISSING counts
+- archival_final_status
+- customer_approval_status إن كان موثقًا
+- SAFE_TO_DELETE_CHAT فقط بعد تحقق persistence بالكامل.
